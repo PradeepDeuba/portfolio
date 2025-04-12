@@ -49,7 +49,6 @@ const AppRoutes = () => {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
-          <h1>hello world</h1>
           <Route path="/projects" element={<Projects />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
