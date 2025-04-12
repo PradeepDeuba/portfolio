@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-  
     <section className="min-h-screen relative flex flex-col justify-center overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20 md:py-32 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10 lg:gap-20">
