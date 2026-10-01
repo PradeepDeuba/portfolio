@@ -60,12 +60,20 @@ src/
     AmbientBackground   Fixed aurora + grid + grain backdrop (CSS only)
     Reveal              Scroll-triggered entrance wrapper
     Marquee             Seamless two-half transform marquee
+    SectionLabel        Bracketed monospace eyebrow
     SectionHeading      Shared eyebrow/title/description block
     PageHeader          Shared inner-page header (auto-numbered from site.nav)
+    KineticText         Word-by-word masked headline reveal
+    Parallax            Scroll-linked translate wrapper
+    MagneticButton      Pointer-attracted CTA wrapper
+    WorkIndex           Numbered project index with pointer-following preview
+    RouteShutter        Accent sweep played on each navigation
     CopyEmail           Click-to-copy email micro-interaction
     PageTransition      Route cross-fade
     Navbar / Footer / Hero / ProjectCard / BlogPost / CustomCursor / ContactForm
-  hooks/                Shared hooks
+  hooks/
+    use-media-query.ts  useMediaQuery / useFinePointer
+    use-toast.ts        Toast store
   lib/
     motion.ts           Motion tokens (durations, easings, variants)
     utils.ts            cn()
@@ -97,6 +105,20 @@ principles of milancompain.com; no branding, copy or assets were taken from it.)
 
 Motion tokens are mirrored in `src/lib/motion.ts` so JS and CSS animations stay
 in step.
+
+## Motion
+
+| Effect | Where | How it degrades |
+|---|---|---|
+| Word-by-word headline reveal | Hero, all section/page headings | Reduced motion: opacity only |
+| Scroll-linked parallax | Hero visual | Reduced motion: `y` pinned to 0 |
+| Magnetic CTAs | Hero, section actions | Coarse pointer or reduced motion: plain wrapper |
+| Pointer-following project preview | Home + Projects list view | Coarse pointer or reduced motion: inline thumbnails per row |
+| Contextual cursor labels (`data-cursor`) | Work index, cards, project links | No custom cursor at all |
+| Route shutter sweep | Every navigation | Not rendered |
+| Page cross-fade | Every route | Shorter, transform dropped |
+| Marquees | Tech strip, footer wordmark | Parked at origin (global CSS guard) |
+| Scroll progress bar | Header | Not rendered |
 
 ## Motion and performance
 
@@ -153,15 +175,53 @@ on it.
 
 ## Deploying
 
-The app is a single-page app with client-side routes, so the host must rewrite
-all unknown paths to `/index.html`, otherwise deep links such as `/projects/ai-platform`
-return a host-level 404.
+This is a single-page app with client-side routes, so the host must serve
+`index.html` for unknown paths, otherwise deep links such as
+`/projects/ai-platform` return a host-level 404 even though the route exists.
+Both mechanisms are already in the repo:
 
-- **Netlify** — add `public/_redirects` containing `/*  /index.html  200`
-- **Vercel** — add a rewrite of `/(.*)` to `/index.html`
-- **GitHub Pages** — copy `dist/index.html` to `dist/404.html` after building
+- **Netlify / Cloudflare Pages** — `public/_redirects` (`/*  /index.html  200`)
+- **GitHub Pages** — `dist/404.html`, emitted automatically as a copy of
+  `index.html` by the `spaFallback404` plugin in `vite.config.ts`
 
 `og:image` is at `public/og-image.png`.
+
+### Building for a sub-path
+
+`base` is read from `VITE_BASE_PATH` (default `/`), and the router derives its
+`basename` from the same value via `import.meta.env.BASE_URL`, so one source
+tree serves both a domain root and a project sub-path:
+
+```sh
+npm run build                          # base "/" — for pradeepdeuba.com.np
+VITE_BASE_PATH=/portfolio/ npm run build   # base "/portfolio/" — for a Pages project site
+```
+
+### Temporary preview (GitHub Pages)
+
+A throwaway preview is published from the **`gh-pages`** branch at
+**<https://pradeepdeuba.github.io/portfolio/>**. It is generated output only —
+`dist/` plus `.nojekyll` — and is force-pushed, so it never needs merging and
+`main` stays the source of truth.
+
+To refresh it after a change:
+
+```sh
+VITE_BASE_PATH=/portfolio/ npm run build
+# then publish dist/ to the gh-pages branch
+```
+
+To remove it entirely, delete the branch and disable Pages:
+
+```sh
+git push origin --delete gh-pages
+gh api -X DELETE repos/PradeepDeuba/portfolio/pages
+```
+
+Note that GitHub Pages serves deep links with an HTTP 404 status (the body is
+the SPA shell, so the app still boots and routes correctly). A host with
+`_redirects` returns 200 for the same URL — one reason the production deploy
+should not be GitHub Pages.
 
 ## Lovable
 

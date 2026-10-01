@@ -8,6 +8,8 @@ type HoverKind = "link" | "text" | "image";
 const LINK_SELECTOR = "a, button, [role=button], input, textarea, select, label";
 const TEXT_SELECTOR = "p, h1, h2, h3, h4, h5, h6, span, li, dd, dt";
 const MEDIA_SELECTOR = "img, video, canvas, svg";
+/** Any element carrying this attribute shows its value in the cursor. */
+const LABEL_SELECTOR = "[data-cursor]";
 
 /** Applied to <html> only while the custom cursor is actually rendered. */
 const HIDE_NATIVE_CURSOR_CLASS = "cursor-none-active";
@@ -33,8 +35,14 @@ const DOT_HOVER: Record<HoverKind, string> = {
 
 const HOVER_SCALE: Record<HoverKind, number> = { link: 1.75, text: 1.25, image: 1.45 };
 
+const DISC_SIZE = 68;
+
 /**
  * Custom pointer.
+ *
+ * Three states: a small ring plus dot by default, a scaled ring over links,
+ * text and media, and a filled disc carrying a label when the pointer is over
+ * an element with `data-cursor="…"`.
  *
  * Renders only on hover-capable pointers and never against a reduced-motion
  * preference — a spring-following cursor is exactly the motion that setting is
@@ -46,6 +54,7 @@ const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [pressed, setPressed] = useState(false);
   const [hover, setHover] = useState<HoverKind | null>(null);
+  const [label, setLabel] = useState<string | null>(null);
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
@@ -64,7 +73,6 @@ const CustomCursor = () => {
     };
   }, []);
 
-  // The native cursor is hidden only while this component is on screen.
   useEffect(() => {
     if (!enabled) return;
 
@@ -96,6 +104,9 @@ const CustomCursor = () => {
       const target = event.target as Element | null;
       if (!target || typeof target.closest !== "function") return;
 
+      const labelled = target.closest<HTMLElement>(LABEL_SELECTOR);
+      setLabel(labelled?.dataset.cursor?.trim() || null);
+
       if (target.closest(LINK_SELECTOR)) setHover("link");
       else if (target.closest(MEDIA_SELECTOR)) setHover("image");
       else if (target.closest(TEXT_SELECTOR)) setHover("text");
@@ -121,26 +132,51 @@ const CustomCursor = () => {
 
   if (!enabled || prefersReducedMotion) return null;
 
+  const hasLabel = Boolean(label);
   const scale = pressed ? 0.8 : hover ? HOVER_SCALE[hover] : 1;
 
   return (
     <div aria-hidden="true" className={hidden ? "opacity-0" : "opacity-100"}>
+      {/* Ring and dot hide while a label disc is shown, so the two never stack. */}
       <motion.div
         className={cn(
-          "pointer-events-none fixed left-0 top-0 z-[9999] h-7 w-7 rounded-full border-2 mix-blend-difference transition-colors duration-base ease-smooth",
-          hover ? RING_HOVER[hover] : "border-azure"
+          "pointer-events-none fixed left-0 top-0 z-[9999] h-7 w-7 rounded-full border-2 mix-blend-difference transition-[colors,opacity] duration-base ease-smooth",
+          hover ? RING_HOVER[hover] : "border-azure",
+          hasLabel && "opacity-0"
         )}
-        animate={{ x: position.x - 14, y: position.y - 14, scale }}
+        animate={{ x: position.x - 14, y: position.y - 14, scale: hasLabel ? 0.6 : scale }}
         transition={SPRING_POINTER}
       />
       <motion.div
         className={cn(
-          "pointer-events-none fixed left-0 top-0 z-[9999] h-2.5 w-2.5 rounded-full mix-blend-difference transition-colors duration-base ease-smooth",
-          hover ? DOT_HOVER[hover] : "bg-azure"
+          "pointer-events-none fixed left-0 top-0 z-[9999] h-2.5 w-2.5 rounded-full mix-blend-difference transition-[colors,opacity] duration-base ease-smooth",
+          hover ? DOT_HOVER[hover] : "bg-azure",
+          hasLabel && "opacity-0"
         )}
-        animate={{ x: position.x - 5, y: position.y - 5, scale: pressed ? 1.3 : 1 }}
+        animate={{
+          x: position.x - 5,
+          y: position.y - 5,
+          scale: hasLabel ? 0.4 : pressed ? 1.3 : 1,
+        }}
         transition={SPRING_POINTER}
       />
+
+      {/* Contextual label disc. */}
+      <motion.div
+        style={{ height: DISC_SIZE, width: DISC_SIZE }}
+        className={cn(
+          "pointer-events-none fixed left-0 top-0 z-[9999] grid place-items-center rounded-full bg-foreground text-center font-mono text-[10px] uppercase tracking-wider text-background transition-opacity duration-base ease-smooth",
+          hasLabel ? "opacity-100" : "opacity-0"
+        )}
+        animate={{
+          x: position.x - DISC_SIZE / 2,
+          y: position.y - DISC_SIZE / 2,
+          scale: hasLabel ? (pressed ? 0.9 : 1) : 0.6,
+        }}
+        transition={SPRING_POINTER}
+      >
+        {label}
+      </motion.div>
     </div>
   );
 };

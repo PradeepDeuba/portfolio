@@ -140,7 +140,8 @@ const About = () => (
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <SectionHeading
             eyebrow="Our Values"
-            title={<span id="values-heading">Principles that guide our work</span>}
+            id="values-heading"
+            title="Principles that guide our work"
             description="These core values shape our approach to projects, client relationships, and our own internal culture."
           />
 
@@ -169,7 +170,8 @@ const About = () => (
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <SectionHeading
             eyebrow="Our Team"
-            title={<span id="team-heading">Meet the innovators</span>}
+            id="team-heading"
+            title="Meet the innovators"
             description="Our diverse team brings together expertise across technology, design, and strategy to create exceptional digital experiences."
           />
 

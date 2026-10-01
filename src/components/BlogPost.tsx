@@ -28,7 +28,7 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
       className="group relative"
     >
       <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
-        <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden" data-cursor="Read">
           <img
             src={post.image}
             alt={post.title}

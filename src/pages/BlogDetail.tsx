@@ -109,7 +109,8 @@ const BlogDetail = () => {
             <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
               <SectionHeading
                 eyebrow="More"
-                title={<span id="more-articles">More articles</span>}
+                id="more-articles"
+                title="More articles"
               />
               <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {related.map((item, index) => (

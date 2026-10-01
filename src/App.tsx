@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AmbientBackground from "./components/AmbientBackground";
+import RouteShutter from "./components/RouteShutter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import CustomCursor from "./components/CustomCursor";
@@ -38,6 +39,14 @@ const ScrollToTop = () => {
 
   return null;
 };
+
+/**
+ * The router base matches Vite's `base` so the same build works at a domain
+ * root ("/") or under a sub-path such as a GitHub Pages project site
+ * ("/portfolio/"). BASE_URL always has a trailing slash; react-router wants it
+ * without, hence the strip.
+ */
+const BASE_NAME = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -78,7 +87,7 @@ const App = () => (
   <TooltipProvider>
     <Toaster />
     <Sonner position="top-right" theme="dark" />
-    <BrowserRouter>
+    <BrowserRouter basename={BASE_NAME}>
       <AmbientBackground />
       <CustomCursor />
 
@@ -93,6 +102,7 @@ const App = () => (
           AnimatePresence and therefore does not re-animate on every route
           change — it persists while the page content cross-fades. */}
       <Navbar />
+      <RouteShutter />
       <AppRoutes />
     </BrowserRouter>
   </TooltipProvider>

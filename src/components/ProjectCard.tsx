@@ -34,7 +34,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       className="group relative"
     >
       <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
-        <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden" data-cursor="View">
           <img
             src={project.image}
             alt={project.title}
@@ -79,6 +79,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {project.demoUrl ? (
               <Link
                 to={project.demoUrl}
+                data-cursor="Open"
                 className="group/link inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
               >
                 View project

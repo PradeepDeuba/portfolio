@@ -5,7 +5,8 @@ import Hero from "../components/Hero";
 import { Reveal } from "../components/Reveal";
 import { Marquee } from "../components/Marquee";
 import { SectionHeading } from "../components/SectionHeading";
-import ProjectCard from "../components/ProjectCard";
+import { WorkIndex } from "../components/WorkIndex";
+import { MagneticButton } from "../components/MagneticButton";
 import { featuredProjects, projects } from "@/data/projects";
 import { staggerDelay } from "@/lib/motion";
 
@@ -60,18 +61,14 @@ const Index = () => (
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <SectionHeading
             eyebrow="Services"
-            title={<span id="services-heading">Innovative solutions for modern challenges</span>}
+            id="services-heading"
+            title="Innovative solutions for modern challenges"
             description="We provide end-to-end development services that help transform your ideas into powerful, scalable solutions."
           />
 
           <ul className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, index) => (
-              <Reveal
-                as="li"
-                key={service.title}
-                delay={staggerDelay(index)}
-                className="group relative"
-              >
+              <Reveal as="li" key={service.title} delay={staggerDelay(index)} className="group relative">
                 <div className="glow-card flex h-full flex-col rounded-2xl border border-white/[0.07] bg-card/50 p-6 transition-transform duration-slow ease-expo hover:-translate-y-1">
                   <div className="flex items-center justify-between">
                     <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-primary transition-colors duration-base ease-smooth group-hover:border-primary/40 group-hover:bg-primary/10">
@@ -98,33 +95,34 @@ const Index = () => (
         </div>
       </section>
 
-      {/* Featured work */}
+      {/* Featured work — presented as an index rather than a card grid. */}
       <section className="relative border-t border-white/[0.07] py-24 md:py-32" aria-labelledby="work-heading">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <SectionHeading
             eyebrow="Projects"
-            title={<span id="work-heading">Featured work</span>}
+            id="work-heading"
+            title="Featured work"
             description="Explore our recent projects showcasing our expertise and innovative approaches to solving complex problems."
             action={
-              <Link
-                to="/projects"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-5 py-2.5 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
-              >
-                View all projects
-                <ArrowRight
-                  size={15}
-                  aria-hidden="true"
-                  className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
-                />
-              </Link>
+              <MagneticButton>
+                <Link
+                  to="/projects"
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-5 py-2.5 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
+                >
+                  View all projects
+                  <ArrowRight
+                    size={15}
+                    aria-hidden="true"
+                    className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </MagneticButton>
             }
           />
 
-          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
+          <Reveal delay={0.1}>
+            <WorkIndex projects={featuredProjects} className="mt-14" />
+          </Reveal>
         </div>
       </section>
 
@@ -133,10 +131,7 @@ const Index = () => (
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <Reveal>
             <div className="glow-card relative overflow-hidden rounded-3xl panel px-6 py-16 text-center sm:px-12 md:py-20">
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 grid-overlay opacity-40"
-              />
+              <div aria-hidden="true" className="absolute inset-0 grid-overlay opacity-40" />
               <div
                 aria-hidden="true"
                 className="absolute -top-24 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,hsl(var(--iris)/0.28),transparent_65%)] blur-3xl"
@@ -154,17 +149,19 @@ const Index = () => (
                   explore possibilities, we&rsquo;re here to help bring your ideas
                   to life.
                 </p>
-                <Link
-                  to="/contact"
-                  className="group mt-9 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-base ease-expo hover:gap-3 hover:bg-primary/90"
-                >
-                  Start a conversation
-                  <ArrowRight
-                    size={16}
-                    aria-hidden="true"
-                    className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
-                  />
-                </Link>
+                <MagneticButton className="mt-9">
+                  <Link
+                    to="/contact"
+                    className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-base ease-expo hover:gap-3 hover:bg-primary/90"
+                  >
+                    Start a conversation
+                    <ArrowRight
+                      size={16}
+                      aria-hidden="true"
+                      className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                </MagneticButton>
               </div>
             </div>
           </Reveal>

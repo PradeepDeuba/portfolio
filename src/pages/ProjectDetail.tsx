@@ -135,7 +135,7 @@ const ProjectDetail = () => {
         {related.length > 0 && (
           <section className="mt-28 border-t border-white/[0.07] pt-20" aria-labelledby="related-heading">
             <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
-              <SectionHeading eyebrow="More" title={<span id="related-heading">More projects</span>} />
+              <SectionHeading eyebrow="More" id="related-heading" title="More projects" />
               <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {related.map((item, index) => (
                   <ProjectCard key={item.id} project={item} index={index} />

@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/Reveal";
+import { SectionLabel } from "@/components/SectionLabel";
+import { KineticText } from "@/components/KineticText";
 import { cn } from "@/lib/utils";
 
 interface SectionHeadingProps {
   eyebrow: string;
-  title: ReactNode;
+  /** Plain text so it can be split for the word-by-word reveal. */
+  title: string;
+  /** Applied to the heading element, so a section can point at it with aria-labelledby. */
+  id?: string;
   description?: ReactNode;
   align?: "left" | "center";
   className?: string;
@@ -15,10 +20,15 @@ interface SectionHeadingProps {
 /**
  * Section heading used by every page, so eyebrow/title/description spacing and
  * type scale stay identical across the site instead of being restated per page.
+ *
+ * The title is a plain string rather than a node: KineticText needs to split it
+ * into words, and pages point at the resulting heading with aria-labelledby
+ * using `id`.
  */
 export const SectionHeading = ({
   eyebrow,
   title,
+  id,
   description,
   align = "left",
   className,
@@ -31,23 +41,30 @@ export const SectionHeading = ({
       className
     )}
   >
-    <Reveal className={cn("max-w-2xl", align === "center" && "mx-auto")}>
-      <span className="label-mono inline-flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-8 bg-primary/60" />
-        {eyebrow}
-      </span>
-      <h2 className="mt-5 font-display text-display-sm font-semibold tracking-tight">
-        {title}
-      </h2>
+    <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
+      <Reveal>
+        <SectionLabel>{eyebrow}</SectionLabel>
+      </Reveal>
+
+      <KineticText
+        as="h2"
+        id={id}
+        segments={[{ text: title }]}
+        delay={0.05}
+        className="mt-5 font-display text-display-sm font-semibold tracking-tight"
+      />
+
       {description && (
-        <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
-          {description}
-        </p>
+        <Reveal delay={0.12}>
+          <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            {description}
+          </p>
+        </Reveal>
       )}
-    </Reveal>
+    </div>
 
     {action && (
-      <Reveal delay={0.1} className="shrink-0">
+      <Reveal delay={0.16} className="shrink-0">
         {action}
       </Reveal>
     )}
