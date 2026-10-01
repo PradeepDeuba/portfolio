@@ -32,7 +32,7 @@ export const PageHeader = ({ eyebrow, title, description, children }: PageHeader
   });
 
   return (
-    <header className="relative border-b border-white/[0.07] pb-12 pt-32 sm:pt-36">
+    <header className="relative border-b border-line pb-12 pt-32 sm:pt-36">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
         <motion.div {...enter(0)} className="flex items-center gap-4">
           <SectionLabel>{eyebrow}</SectionLabel>

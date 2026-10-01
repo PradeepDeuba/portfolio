@@ -1,35 +1,54 @@
 /**
- * Single source of truth for site identity, contact details and navigation.
+ * Site identity and contact details — real values, taken from the live
+ * portfolio's Supabase `hero_content` / `education` tables.
  *
- * The values below are the placeholders that shipped with the original
- * template. They are collected here so there is exactly one place to edit.
- * Anything marked `TODO` still needs your real value — see README.md.
+ * Nothing here is invented. Fields that had no real value in the source data
+ * are omitted rather than filled with a placeholder, so nothing on the site
+ * links somewhere that doesn't exist.
  */
 export const site = {
-  name: "Innovo",
+  name: "Pradeep Deuba",
+  /** From hero_content.title */
+  title: "IoT Developer & Full Stack Engineer",
+  /** From hero_content.description */
   tagline:
-    "Creating innovative tech solutions with a focus on clean design, intuitive user experience, and cutting-edge technology.",
+    "Based in Kathmandu, Nepal. I specialize in IoT development, frontend and backend technologies, creating innovative solutions for the digital world.",
 
-  /** TODO: replace with your real contact details. */
+  location: "Kathmandu, Nepal",
+  /** From hero_content.image_url */
+  portrait: "https://i.imgur.com/v5XPH7T.jpeg",
+
   contact: {
-    email: "hello@innovo.com",
-    phone: "+1 (555) 123-4567",
-    phoneHref: "tel:+15551234567",
-    address: "123 Innovation Drive, San Francisco, CA 94103",
+    /** From the site's contact handler */
+    email: "pradeepdeuba68@gmail.com",
   },
 
-  /** TODO: replace with full URLs to your own profiles. */
+  /**
+   * hero_content also carried `linkedin_url: "https://linkedin.com/"` — the bare
+   * domain, i.e. not a real profile — so LinkedIn is deliberately left out
+   * rather than shipped as a dead link. Add it here once there's a real URL.
+   */
   social: {
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
+    github: "https://github.com/PradeepDeuba68",
+    facebook: "https://facebook.com/pradeep.deuba.2025",
   },
+
+  /** From the `education` table. */
+  education: [
+    {
+      degree: "Bachelor in Information Technology",
+      field: "IT",
+      school: "Texas College of Management & IT",
+      location: "Chabahil, Kathmandu",
+      period: "2021 — 2025",
+    },
+  ],
 
   nav: [
     { name: "Home", path: "/" },
     { name: "Projects", path: "/projects" },
-    { name: "About", path: "/about" },
     { name: "Blog", path: "/blog" },
+    { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ],
 } as const;

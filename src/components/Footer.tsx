@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUp, Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { ArrowUp, Facebook, Github, Mail } from "lucide-react";
 import { site } from "@/data/site";
 import { CopyEmail } from "@/components/CopyEmail";
 import { Marquee } from "@/components/Marquee";
@@ -14,10 +14,11 @@ const Footer = () => {
   const reduceMotion = useReducedMotion();
   const currentYear = new Date().getFullYear();
 
+  // Only profiles that actually exist. The source data's linkedin_url was the
+  // bare "https://linkedin.com/", so it is excluded rather than shipped dead.
   const socials = [
     { label: "GitHub", href: site.social.github, Icon: Github },
-    { label: "LinkedIn", href: site.social.linkedin, Icon: Linkedin },
-    { label: "Twitter", href: site.social.twitter, Icon: Twitter },
+    { label: "Facebook", href: site.social.facebook, Icon: Facebook },
     { label: "Email", href: `mailto:${site.contact.email}`, Icon: Mail },
   ];
 
@@ -26,13 +27,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative z-10 mt-24 border-t border-white/[0.07]">
+    <footer className="relative z-10 mt-24 border-t border-line">
       {/* Oversized wordmark band. Decorative, so it is hidden from AT. */}
-      <div aria-hidden="true" className="border-b border-white/[0.07] py-8">
+      <div aria-hidden="true" className="border-b border-line py-8">
         <Marquee
           items={[site.name, site.tagline]}
           durationSec={60}
-          itemClassName="text-3xl md:text-5xl text-white/[0.10]"
+          itemClassName="text-3xl md:text-5xl text-muted-foreground/25"
           separator="/"
         />
       </div>
@@ -102,7 +103,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-5 border-t border-white/[0.07] pt-7 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-5 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-xs tracking-wide text-muted-foreground">
             &copy; {currentYear} {site.name}
           </p>

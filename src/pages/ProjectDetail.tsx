@@ -54,7 +54,7 @@ const ProjectDetail = () => {
               {project.tags.map((tag) => (
                 <li
                   key={tag}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
+                  className="rounded-full border border-line bg-panel px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
                 >
                   {tag}
                 </li>
@@ -81,7 +81,7 @@ const ProjectDetail = () => {
           </div>
 
           <Reveal className="mx-auto mt-16 max-w-7xl px-5 sm:px-6 lg:px-10">
-            <div className="glow-card relative overflow-hidden rounded-3xl border border-white/[0.07]">
+            <div className="glow-card relative overflow-hidden rounded-3xl border border-line">
               <img
                 src={project.image}
                 alt={project.title}
@@ -95,17 +95,26 @@ const ProjectDetail = () => {
           </Reveal>
 
           <div className="mx-auto mt-16 max-w-7xl px-5 sm:px-6 lg:px-10">
-            {project.overview && project.overview.length > 0 && (
-              <div className="max-w-3xl space-y-5">
-                {project.overview.map((paragraph, index) => (
-                  <Reveal key={index} delay={index * 0.05}>
-                    <p className="leading-relaxed text-muted-foreground">{paragraph}</p>
-                  </Reveal>
-                ))}
-              </div>
+            {/* The template carried an optional `overview` prose field that was
+                always empty. Projects now link to the matching write-up instead,
+                which is where the real detail lives. */}
+            {project.postSlug && (
+              <Reveal className="max-w-3xl">
+                <Link
+                  to={`/blog/${project.postSlug}`}
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-primary"
+                >
+                  Read the full write-up
+                  <ArrowUpRight
+                    size={15}
+                    aria-hidden="true"
+                    className="transition-transform duration-base ease-expo group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </Link>
+              </Reveal>
             )}
 
-            <Reveal className="mt-12 flex flex-wrap items-center gap-3 border-t border-white/[0.07] pt-10">
+            <Reveal className="mt-12 flex flex-wrap items-center gap-3 border-t border-line pt-10">
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
@@ -119,7 +128,7 @@ const ProjectDetail = () => {
               )}
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-6 py-3 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
+                className="group inline-flex items-center gap-2 rounded-full border border-line bg-panel px-6 py-3 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
               >
                 Discuss a project
                 <ArrowUpRight
@@ -133,7 +142,7 @@ const ProjectDetail = () => {
         </article>
 
         {related.length > 0 && (
-          <section className="mt-28 border-t border-white/[0.07] pt-20" aria-labelledby="related-heading">
+          <section className="mt-28 border-t border-line pt-20" aria-labelledby="related-heading">
             <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
               <SectionHeading eyebrow="More" id="related-heading" title="More projects" />
               <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

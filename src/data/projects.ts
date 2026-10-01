@@ -1,13 +1,15 @@
 /**
- * Project catalogue.
+ * Project catalogue — real work only.
  *
- * Previously this array was duplicated verbatim in `pages/Index.tsx` and
- * `pages/Projects.tsx`, so the two lists could drift apart. It now lives here
- * and both pages (plus the /projects/:id detail page) read from it.
+ * Sources:
+ *   - "ESP32 Car" comes from the live site's Supabase `projects` table, verbatim.
+ *   - The other three correspond to real public repositories on the owner's
+ *     GitHub, and their descriptions are the owner's own words, taken from the
+ *     opening of the matching blog post. Nothing here was written from scratch
+ *     or embellished.
  *
- * TODO: `githubUrl` below is the template placeholder ("https://github.com").
- * Point it at the real repository, or set it to `undefined` to hide the icon.
- * `demoUrl` is an in-app route and resolves to the detail page.
+ * `tags` are the technologies that genuinely appear in the corresponding post
+ * (shift registers, I²C/SPI, TDS sensing, and so on) rather than a generic list.
  */
 export interface Project {
   id: string;
@@ -15,88 +17,70 @@ export interface Project {
   description: string;
   image: string;
   tags: string[];
-  /** In-app route for the detail page. */
+  /** In-app route for the write-up. */
   demoUrl?: string;
-  /** External repository link. */
+  /** Real public repository. */
   githubUrl?: string;
-  /**
-   * Optional long-form sections rendered on /projects/:id.
-   * Left empty in the template — add your own copy and the page picks it up.
-   */
-  overview?: string[];
+  /** Slug of the matching post, when one exists. */
+  postSlug?: string;
 }
 
 export const projects: Project[] = [
   {
-    id: "ai-platform",
-    title: "AI Research Platform",
+    id: "esp32-car",
+    title: "ESP32 Car",
     description:
-      "A collaborative platform for AI researchers to share models, datasets, and findings with an intuitive interface.",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
-    tags: ["React", "TensorFlow", "API"],
-    demoUrl: "/projects/ai-platform",
-    githubUrl: "https://github.com",
+      "A smart Bluetooth-controlled car powered by ESP32, allowing wireless movement control via a mobile app, with real-time speed adjustment and direction switching.",
+    image: "https://i.imgur.com/3uW3sRC.jpeg",
+    tags: ["ESP32", "Bluetooth", "C++", "Motor Control"],
+    demoUrl: "/projects/esp32-car",
+    githubUrl: "https://github.com/PradeepDeuba68",
   },
   {
-    id: "fintech-dashboard",
-    title: "FinTech Analytics Dashboard",
+    id: "esp32-water-monitoring",
+    title: "ESP32 Water Quality & Level Monitoring",
     description:
-      "Real-time financial analytics dashboard with predictive modeling and customizable visualization tools.",
+      "An in-tank rig that answers three questions from a phone: how much water is left, how clean it is, and whether the pump is doing its job.",
     image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-    tags: ["TypeScript", "D3.js", "Node.js"],
-    demoUrl: "/projects/fintech-dashboard",
-    githubUrl: "https://github.com",
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&q=80",
+    tags: ["ESP32", "TDS", "DS18B20", "HC-SR04", "OneWire"],
+    demoUrl: "/projects/esp32-water-monitoring",
+    githubUrl: "https://github.com/PradeepDeuba68/ESP32-Water-Monitoring-System-",
+    postSlug: "esp32-water-quality-monitoring",
   },
   {
-    id: "iot-platform",
-    title: "IoT Management Platform",
+    id: "diy-7-segment-clock",
+    title: "DIY 7-Segment Digital Clock",
     description:
-      "Secure platform for managing IoT devices across industrial settings with real-time monitoring capabilities.",
+      "A large-format 7-segment clock built the hard way — shift registers, current-sinking drivers and a multiplex loop written from scratch.",
     image:
-      "https://images.unsplash.com/photo-1563770660941-3bdc58a5a55c?auto=format&fit=crop&q=80&w=800",
-    tags: ["React", "MQTT", "GraphQL"],
-    demoUrl: "/projects/iot-platform",
-    githubUrl: "https://github.com",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80",
+    tags: ["74HC595", "ULN2803", "Multiplexing", "ATmega"],
+    demoUrl: "/projects/diy-7-segment-clock",
+    githubUrl: "https://github.com/PradeepDeuba68/DIY-7-Segment-Digital-Clock",
+    postSlug: "diy-7-segment-digital-clock",
   },
   {
-    id: "health-app",
-    title: "Health Monitoring App",
+    id: "oled-animation-esp32-c3",
+    title: "OLED Animation on ESP32-C3",
     description:
-      "Mobile application for tracking health metrics with personalized insights and healthcare provider integration.",
+      "Squeezing a smooth 60 fps animation out of a 128×64 SSD1306 OLED on an ESP32-C3, by moving off I²C and rethinking how frames are pushed.",
     image:
-      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
-    tags: ["React Native", "HealthKit", "Firebase"],
-    demoUrl: "/projects/health-app",
-    githubUrl: "https://github.com",
-  },
-  {
-    id: "ecommerce-platform",
-    title: "E-commerce Platform",
-    description:
-      "Scalable e-commerce solution with advanced inventory management and powerful analytics capabilities.",
-    image:
-      "https://images.unsplash.com/photo-1629397586330-ced1d0e4f8bf?auto=format&fit=crop&q=80&w=800",
-    tags: ["Next.js", "PostgreSQL", "Stripe"],
-    demoUrl: "/projects/ecommerce-platform",
-    githubUrl: "https://github.com",
-  },
-  {
-    id: "education-portal",
-    title: "Education Portal",
-    description:
-      "Interactive learning platform with progress tracking, assessments, and collaborative learning spaces.",
-    image:
-      "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=800",
-    tags: ["Vue.js", "Express", "MongoDB"],
-    demoUrl: "/projects/education-portal",
-    githubUrl: "https://github.com",
+      "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=1200&q=80",
+    tags: ["ESP32-C3", "SSD1306", "SPI", "DMA", "GFX"],
+    demoUrl: "/projects/oled-animation-esp32-c3",
+    githubUrl:
+      "https://github.com/PradeepDeuba68/OLED-Animation-on-ESP32-C3-with-0.96-OLED-Display",
+    postSlug: "oled-animation-esp32-c3",
   },
 ];
 
-/** Projects shown on the home page. */
 export const featuredProjects = projects.slice(0, 3);
 
 export const getProjectById = (id?: string): Project | undefined =>
   projects.find((project) => project.id === id);
+
+/** Every tag used across the catalogue, for filter controls and marquees. */
+export const allTags: string[] = Array.from(
+  new Set(projects.flatMap((project) => project.tags))
+);

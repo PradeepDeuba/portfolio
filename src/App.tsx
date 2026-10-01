@@ -4,6 +4,8 @@ import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ThemeProvider from "./components/ThemeProvider";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 import AmbientBackground from "./components/AmbientBackground";
 import RouteShutter from "./components/RouteShutter";
 import Navbar from "./components/Navbar";
@@ -24,7 +26,6 @@ import NotFound from "./pages/NotFound";
  *
  * index.css sets `scroll-behavior: smooth` for anchor links, which would also
  * make this programmatic jump animate the whole page on every route change.
- * Setting it to `auto` for the duration of the call keeps the reset immediate.
  */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -43,8 +44,7 @@ const ScrollToTop = () => {
 /**
  * The router base matches Vite's `base` so the same build works at a domain
  * root ("/") or under a sub-path such as a GitHub Pages project site
- * ("/portfolio/"). BASE_URL always has a trailing slash; react-router wants it
- * without, hence the strip.
+ * ("/portfolio/").
  */
 const BASE_NAME = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
 
@@ -54,9 +54,6 @@ const AppRoutes = () => {
   return (
     <>
       <ScrollToTop />
-      {/* Navbar is mounted once, in App — see the note there. Rendering it here
-          as well produced two identical navigation landmarks, two scroll
-          listeners and two aria-current markers for the active route. */}
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
@@ -76,36 +73,36 @@ const AppRoutes = () => {
 };
 
 /**
- * Dark mode is declared once as `class="dark"` on <html> in index.html, so no
- * effect here writes to documentElement or body.
+ * Theme is applied as `data-theme` on <html> by ThemeProvider, so all five
+ * design directions share one component tree and one bundle.
  *
- * QueryClientProvider has been removed: @tanstack/react-query was mounted around
- * the app but no component ever called useQuery, useMutation or useQueryClient,
- * so it was pure bundle weight.
+ * ThemeSwitcher is the review control for choosing between them — remove it,
+ * the ThemeProvider wrapper and src/lib/themes.ts once a direction is settled.
  */
 const App = () => (
-  <TooltipProvider>
-    <Toaster />
-    <Sonner position="top-right" theme="dark" />
-    <BrowserRouter basename={BASE_NAME}>
-      <AmbientBackground />
-      <CustomCursor />
+  <ThemeProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner position="top-right" theme="dark" />
+      <BrowserRouter basename={BASE_NAME}>
+        <AmbientBackground />
+        <CustomCursor />
 
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground"
-      >
-        Skip to content
-      </a>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground"
+        >
+          Skip to content
+        </a>
 
-      {/* Mounted here rather than inside AppRoutes so it sits outside
-          AnimatePresence and therefore does not re-animate on every route
-          change — it persists while the page content cross-fades. */}
-      <Navbar />
-      <RouteShutter />
-      <AppRoutes />
-    </BrowserRouter>
-  </TooltipProvider>
+        {/* Outside AnimatePresence so it persists across route changes. */}
+        <Navbar />
+        <RouteShutter />
+        <AppRoutes />
+        <ThemeSwitcher />
+      </BrowserRouter>
+    </TooltipProvider>
+  </ThemeProvider>
 );
 
 export default App;

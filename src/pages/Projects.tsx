@@ -69,7 +69,7 @@ const Projects = () => {
                           "shrink-0 rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors duration-base ease-smooth",
                           isActive
                             ? "border-primary/50 bg-primary/15 text-foreground"
-                            : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:border-white/20 hover:text-foreground"
+                            : "border-line bg-panel text-muted-foreground hover:border-primary/50 hover:text-foreground"
                         )}
                       >
                         {label}
@@ -84,7 +84,7 @@ const Projects = () => {
               <div
                 role="group"
                 aria-label="Change project layout"
-                className="flex shrink-0 items-center gap-1 rounded-full border border-white/[0.08] bg-white/[0.02] p-1"
+                className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-panel p-1"
               >
                 {views.map(({ id, label, Icon }) => (
                   <button
@@ -123,7 +123,7 @@ const Projects = () => {
                 <WorkIndex projects={filtered} className="mt-8" />
               )
             ) : (
-              <div className="mt-8 rounded-2xl border border-white/[0.07] bg-card/40 px-6 py-20 text-center">
+              <div className="mt-8 rounded-2xl border border-line bg-card px-6 py-20 text-center">
                 <p className="text-muted-foreground">
                   No projects found with the selected filter.
                 </p>

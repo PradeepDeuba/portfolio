@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 
 const fieldClasses =
-  "w-full rounded-xl border border-white/[0.09] bg-white/[0.03] px-4 py-3 text-sm outline-none transition-colors duration-base ease-smooth placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-white/[0.05]";
+  "w-full rounded-xl border border-line bg-panel px-4 py-3 text-sm outline-none transition-colors duration-base ease-smooth placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-panel";
 
 const labelClasses = "mb-2 block font-mono text-xs uppercase tracking-wider text-muted-foreground";
 
@@ -70,7 +70,7 @@ const ContactForm = () => {
   return (
     <div className="w-full">
       {isSubmitted ? (
-        <div className="rounded-2xl border border-white/[0.07] bg-card/50 px-6 py-14 text-center" role="status">
+        <div className="rounded-2xl border border-line bg-card px-6 py-14 text-center" role="status">
           <motion.div
             initial={{ scale: reduceMotion ? 1 : 0 }}
             animate={{ scale: 1 }}

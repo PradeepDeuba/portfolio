@@ -52,10 +52,10 @@ export const WorkIndex = ({ projects, className }: WorkIndexProps) => {
         ref={containerRef}
         onPointerMove={handlePointerMove}
         onPointerLeave={() => setActiveIndex(null)}
-        className="border-t border-white/[0.08]"
+        className="border-t border-line"
       >
         {projects.map((project, index) => (
-          <li key={project.id} className="border-b border-white/[0.08]">
+          <li key={project.id} className="border-b border-line">
             <Link
               to={project.demoUrl ?? "/projects"}
               onPointerEnter={() => setActiveIndex(index)}
@@ -95,7 +95,7 @@ export const WorkIndex = ({ projects, className }: WorkIndexProps) => {
                     className="hidden h-14 w-14 rounded-lg object-cover sm:block"
                   />
                 )}
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-muted-foreground transition-all duration-slow ease-expo group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-primary">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-panel text-muted-foreground transition-all duration-slow ease-expo group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-primary">
                   <ArrowUpRight size={16} aria-hidden="true" />
                 </span>
               </span>
@@ -119,7 +119,7 @@ export const WorkIndex = ({ projects, className }: WorkIndexProps) => {
                 animate={{ opacity: 1, scale: 1, rotate: -3 }}
                 exit={{ opacity: 0, scale: 0.96, rotate: -3 }}
                 transition={{ duration: 0.35, ease: EASE_EXPO }}
-                className="w-72 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-white/15 shadow-lift"
+                className="w-72 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-line shadow-lift"
               >
                 <img
                   src={activeProject.image}

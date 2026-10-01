@@ -1,12 +1,19 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Github, Mail, MapPin } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import PageHeader from "../components/PageHeader";
 import ContactForm from "../components/ContactForm";
+import { CopyEmail } from "../components/CopyEmail";
 import { Reveal } from "../components/Reveal";
 import { site } from "@/data/site";
 import { staggerDelay } from "@/lib/motion";
 
-const contactInfo = [
+/**
+ * The template advertised a phone number, an office address, office hours and
+ * an embedded map of San Francisco. None of that was real, and the real data has
+ * none of it either — so it is gone rather than replaced with something made up.
+ * What remains is only verifiable contact information.
+ */
+const channels = [
   {
     icon: <Mail className="h-5 w-5" aria-hidden="true" />,
     title: "Email",
@@ -15,25 +22,19 @@ const contactInfo = [
     external: false,
   },
   {
-    icon: <Phone className="h-5 w-5" aria-hidden="true" />,
-    title: "Phone",
-    details: site.contact.phone,
-    link: site.contact.phoneHref,
-    external: false,
-  },
-  {
-    icon: <MapPin className="h-5 w-5" aria-hidden="true" />,
-    title: "Office",
-    details: site.contact.address,
-    link: "https://maps.google.com",
+    icon: <Github className="h-5 w-5" aria-hidden="true" />,
+    title: "GitHub",
+    details: "github.com/PradeepDeuba68",
+    link: site.social.github,
     external: true,
   },
-];
-
-const officeHours = [
-  { days: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
-  { days: "Saturday", hours: "By appointment" },
-  { days: "Sunday", hours: "Closed" },
+  {
+    icon: <Facebook className="h-5 w-5" aria-hidden="true" />,
+    title: "Facebook",
+    details: "facebook.com/pradeep.deuba.2025",
+    link: site.social.facebook,
+    external: true,
+  },
 ];
 
 const Contact = () => (
@@ -41,28 +42,28 @@ const Contact = () => (
     <main id="main">
       <PageHeader
         eyebrow="Contact"
-        title="Let’s start a conversation"
-        description="Have a project in mind or just want to explore possibilities? We&rsquo;re here to help turn your ideas into reality."
+        title="Get in touch"
+        description="Questions about a build, a sensor that won't settle, or a project worth talking through — the form and the address below both reach me."
       />
 
-      <section className="py-16 md:py-20" aria-label="Contact details">
+      <section className="py-16 md:py-20" aria-label="Contact channels">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
           <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {contactInfo.map((item, index) => (
+            {channels.map((item, index) => (
               <Reveal as="li" key={item.title} delay={staggerDelay(index)}>
                 <a
                   href={item.link}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  className="glow-card group flex h-full flex-col rounded-2xl border border-white/[0.07] bg-card/50 p-6 transition-transform duration-slow ease-expo hover:-translate-y-1"
+                  className="glow-card group flex h-full flex-col rounded-2xl border border-line bg-card p-6 transition-transform duration-slow ease-expo hover:-translate-y-1"
                 >
-                  <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-primary transition-colors duration-base ease-smooth group-hover:border-primary/40 group-hover:bg-primary/10">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-panel text-primary transition-colors duration-base ease-smooth group-hover:border-primary/50">
                     {item.icon}
                   </span>
                   <h2 className="mt-6 font-mono text-xs uppercase tracking-wider text-muted-foreground">
                     {item.title}
                   </h2>
-                  <p className="mt-2 font-display text-base font-medium break-words">
+                  <p className="mt-2 break-words font-display text-base font-medium">
                     {item.details}
                   </p>
                 </a>
@@ -79,11 +80,11 @@ const Contact = () => (
               id="contact-form-heading"
               className="font-display text-display-sm font-semibold tracking-tight"
             >
-              Send us a message
+              Send a message
             </h2>
             <p className="mt-5 max-w-lg text-muted-foreground">
-              Fill out the form below and we&rsquo;ll get back to you as soon as
-              possible. We&rsquo;re excited to hear about your project!
+              Tell me what you&rsquo;re working on and I&rsquo;ll get back to you.
+              If the form gives you trouble, the email address works too.
             </p>
             <div className="mt-10">
               <ContactForm />
@@ -92,29 +93,34 @@ const Contact = () => (
 
           <Reveal delay={0.1}>
             <div className="lg:sticky lg:top-28">
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.07]">
-                <iframe
-                  title={`Map showing the ${site.name} office in San Francisco`}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100940.14245968247!2d-122.43759999999999!3d37.75769999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1646244219503!5m2!1sen!2sus"
-                  className="h-80 w-full grayscale-[0.35] contrast-[1.05] sm:h-96 lg:h-[26rem]"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
+              <div className="rounded-2xl border border-line bg-card p-6 sm:p-8">
+                <h2 className="label-mono">Direct</h2>
+                <div className="mt-5">
+                  <CopyEmail />
+                </div>
 
-              <div className="mt-6 rounded-2xl border border-white/[0.07] bg-card/50 p-6">
-                <h2 className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Office hours
-                </h2>
-                <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4">
-                  {officeHours.map((entry) => (
-                    <div key={entry.days} className={entry.days === "Sunday" ? "col-span-2" : undefined}>
-                      <dt className="text-sm font-medium">{entry.days}</dt>
-                      <dd className="mt-0.5 text-sm text-muted-foreground">{entry.hours}</dd>
-                    </div>
-                  ))}
+                <dl className="mt-8 space-y-5 border-t border-line pt-8">
+                  <div>
+                    <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                      Based in
+                    </dt>
+                    <dd className="mt-1.5 inline-flex items-center gap-2 font-display text-base font-medium">
+                      <MapPin size={15} aria-hidden="true" className="text-primary" />
+                      {site.location}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                      Role
+                    </dt>
+                    <dd className="mt-1.5 font-display text-base font-medium">{site.title}</dd>
+                  </div>
                 </dl>
+
+                <p className="mt-8 border-t border-line pt-6 text-xs leading-relaxed text-muted-foreground">
+                  Prefer to read first? The write-ups on the blog cover most of
+                  what I get asked about.
+                </p>
               </div>
             </div>
           </Reveal>

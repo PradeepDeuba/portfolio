@@ -53,11 +53,20 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				/* Futuristic accent trio used for gradients and glows. */
-				iris: 'hsl(var(--iris))',
+				/**
+				 * Semantic surface tokens. These replace the hard-coded
+				 * `white/[0.07]`-style values the components used to carry, so a
+				 * theme can be light or dark without touching component markup.
+				 */
+				line: 'hsl(var(--line))',
+				panel: 'hsl(var(--panel))',
+				ink: 'hsl(var(--ink))',
+
+				/* Accent set, re-pointed per theme. */
 				azure: 'hsl(var(--azure))',
-				cyan: 'hsl(var(--cyan))',
+				iris: 'hsl(var(--iris))',
 				plasma: 'hsl(var(--plasma))',
+				cyan: 'hsl(var(--cyan))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -72,17 +81,27 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				/**
+				 * Cards use xl/2xl/3xl, so those are mapped to variables too —
+				 * otherwise the square themes (terminal, editorial, brutalist)
+				 * would keep the dark theme's rounded corners.
+				 */
+				xl: 'var(--radius-lg)',
+				'2xl': 'var(--radius-xl)',
+				'3xl': 'var(--radius-2xl)'
 			},
+			/**
+			 * Font families come from CSS variables so each theme can swap its
+			 * typographic personality (serif / mono / system sans) without any
+			 * component knowing about it.
+			 */
 			fontFamily: {
-				sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-				display: ['Inter', 'SF Pro Display', 'ui-sans-serif', 'sans-serif'],
-				/* System mono for eyebrows/labels — adds no network request. */
-				mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+				sans: 'var(--font-body)',
+				display: 'var(--font-display)',
+				mono: 'var(--font-mono)'
 			},
 			fontSize: {
-				/* Fluid display sizes so headings scale between 360px and 1600px
-				   without breakpoint jumps. */
 				'display-sm': ['clamp(2.25rem, 7vw, 3.5rem)', { lineHeight: '1.02', letterSpacing: '-0.03em' }],
 				'display-md': ['clamp(2.75rem, 9vw, 5.5rem)', { lineHeight: '0.98', letterSpacing: '-0.035em' }],
 				'display-lg': ['clamp(3.25rem, 13vw, 9rem)', { lineHeight: '0.92', letterSpacing: '-0.04em' }],
@@ -90,15 +109,16 @@ export default {
 				label: ['0.6875rem', { lineHeight: '1', letterSpacing: '0.18em' }]
 			},
 			boxShadow: {
-				glow: '0 0 0 1px hsl(var(--primary) / 0.35), 0 12px 40px -12px hsl(var(--primary) / 0.45)',
-				card: '0 1px 0 0 hsl(0 0% 100% / 0.04) inset, 0 24px 48px -24px hsl(0 0% 0% / 0.9)',
-				lift: '0 32px 64px -32px hsl(0 0% 0% / 1)'
+				/* Driven by theme vars: glow for dark themes, hard offset for brutalist, none for editorial. */
+				glow: 'var(--shadow-glow)',
+				card: 'var(--shadow-card)',
+				lift: 'var(--shadow-lift)'
 			},
 			backgroundImage: {
 				'grid-fine':
 					'linear-gradient(to right, hsl(var(--line) / 0.55) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--line) / 0.55) 1px, transparent 1px)',
 				'gradient-iris': 'linear-gradient(100deg, hsl(var(--azure)), hsl(var(--iris)) 45%, hsl(var(--plasma)))',
-				'gradient-text': 'linear-gradient(100deg, hsl(var(--foreground)) 10%, hsl(var(--azure)) 55%, hsl(var(--plasma)))'
+				'gradient-text': 'var(--gradient-text)'
 			},
 			backgroundSize: {
 				'grid-fine': '56px 56px'
@@ -142,14 +162,24 @@ export default {
 					'0%': { transform: 'translate3d(-120%, 0, 0)' },
 					'100%': { transform: 'translate3d(220%, 0, 0)' }
 				},
-				'scan': {
-					'0%': { transform: 'translate3d(0, -100%, 0)', opacity: '0' },
-					'50%': { opacity: '0.5' },
-					'100%': { transform: 'translate3d(0, 1000%, 0)', opacity: '0' }
-				},
 				'pulse-ring': {
 					'0%': { transform: 'scale(0.9)', opacity: '0.7' },
 					'100%': { transform: 'scale(1.9)', opacity: '0' }
+				},
+				/* Trace dashes travel along the circuit theme's PCB lines. */
+				trace: {
+					from: { strokeDashoffset: '0' },
+					to: { strokeDashoffset: '-240' }
+				},
+				/* Terminal caret + scanline sweep. */
+				caret: {
+					'0%, 45%': { opacity: '1' },
+					'50%, 95%': { opacity: '0' },
+					'100%': { opacity: '1' }
+				},
+				scanline: {
+					from: { transform: 'translate3d(0, -100%, 0)' },
+					to: { transform: 'translate3d(0, 100vh, 0)' }
 				}
 			},
 			animation: {
@@ -160,8 +190,10 @@ export default {
 				'drift-a': 'drift-a 26s ease-in-out infinite',
 				'drift-b': 'drift-b 34s ease-in-out infinite',
 				shimmer: 'shimmer 2.4s var(--ease-expo, cubic-bezier(0.16, 1, 0.3, 1)) infinite',
-				'scan': 'scan 7s linear infinite',
-				'pulse-ring': 'pulse-ring 2.4s var(--ease-expo, cubic-bezier(0.16, 1, 0.3, 1)) infinite'
+				'pulse-ring': 'pulse-ring 2.4s var(--ease-expo, cubic-bezier(0.16, 1, 0.3, 1)) infinite',
+				trace: 'trace 6s linear infinite',
+				caret: 'caret 1.1s steps(1, end) infinite',
+				scanline: 'scanline var(--scanline-duration, 9s) linear infinite'
 			}
 		}
 	},

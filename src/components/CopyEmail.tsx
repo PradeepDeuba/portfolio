@@ -41,7 +41,7 @@ export const CopyEmail = ({ className, showIcon = true }: CopyEmailProps) => {
       onClick={handleCopy}
       aria-label={`Copy email address ${site.contact.email}`}
       className={cn(
-        "group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2.5 text-left font-mono text-xs tracking-wide transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10",
+        "group inline-flex items-center gap-2.5 rounded-full border border-line bg-panel px-4 py-2.5 text-left font-mono text-xs tracking-wide transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10",
         className
       )}
     >

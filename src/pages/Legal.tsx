@@ -27,15 +27,15 @@ const Legal = () => (
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-10">
           <Reveal>
-            <div className="rounded-2xl border border-white/[0.07] bg-card/50 p-6 sm:p-8">
+            <div className="rounded-2xl border border-line bg-card p-6 sm:p-8">
               <h2 className="flex items-center gap-3 font-display text-lg font-semibold tracking-tight">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-primary">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line bg-panel text-primary">
                   <FileText size={18} aria-hidden="true" />
                 </span>
                 Documents still to be added
               </h2>
 
-              <ul className="mt-6 divide-y divide-white/[0.06] border-t border-white/[0.06]">
+              <ul className="mt-6 divide-y divide-line border-t border-line">
                 {documents.map((document) => (
                   <li key={document} className="py-3.5 text-muted-foreground">
                     {document}

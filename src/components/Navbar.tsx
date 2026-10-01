@@ -134,7 +134,7 @@ const Navbar = () => {
                       <motion.span
                         layoutId="nav-active"
                         aria-hidden="true"
-                        className="absolute inset-0 -z-10 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/10"
+                        className="absolute inset-0 -z-10 rounded-full bg-panel ring-1 ring-inset ring-line"
                         transition={reduceMotion ? { duration: 0 } : SPRING_SOFT}
                       />
                     )}
@@ -147,12 +147,12 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <Link
               to="/contact"
-              className="group relative hidden overflow-hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 sm:block"
+              className="group relative hidden overflow-hidden rounded-full border border-line bg-panel px-4 py-2 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 sm:block"
             >
               <span className="relative z-10">Start a project</span>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-white/10 opacity-0 transition-opacity duration-base group-hover:opacity-100 group-hover:animate-shimmer"
+                className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-panel opacity-0 transition-opacity duration-base group-hover:opacity-100 group-hover:animate-shimmer"
               />
             </Link>
 
@@ -163,7 +163,7 @@ const Navbar = () => {
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-foreground transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 lg:hidden"
+              className="grid h-10 w-10 place-items-center rounded-full border border-line bg-panel text-foreground transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 lg:hidden"
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -200,7 +200,7 @@ const Navbar = () => {
                         delay: reduceMotion ? 0 : 0.04 + index * 0.06,
                         ease: EASE_EXPO,
                       }}
-                      className="border-b border-white/[0.06]"
+                      className="border-b border-line"
                     >
                       <Link
                         to={item.path}

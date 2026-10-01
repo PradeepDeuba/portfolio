@@ -64,7 +64,7 @@ const NotFound = () => {
             </Link>
             <Link
               to="/projects"
-              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-6 py-3 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
+              className="inline-flex items-center gap-2 rounded-full border border-line bg-panel px-6 py-3 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
             >
               Browse projects
             </Link>

@@ -27,10 +27,10 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
       }}
       className="group relative"
     >
-      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
+      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card transition-transform duration-slow ease-expo hover:-translate-y-1.5">
         <div className="relative aspect-[16/10] overflow-hidden" data-cursor="Read">
           <img
-            src={post.image}
+            src={post.cover}
             alt={post.title}
             loading="lazy"
             decoding="async"
@@ -39,13 +39,15 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
               loaded ? "opacity-100 blur-0" : "opacity-0 blur-lg"
             }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
 
-          <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider backdrop-blur-md">
-            {post.category}
-          </span>
+          {post.topics[0] && (
+            <span className="absolute left-4 top-4 rounded-full border border-line bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider backdrop-blur-md">
+              {post.topics[0]}
+            </span>
+          )}
 
-          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo rotate-[-30deg] group-hover:rotate-0 group-hover:opacity-100">
+          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-line bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo rotate-[-30deg] group-hover:rotate-0 group-hover:opacity-100">
             <ArrowUpRight size={15} aria-hidden="true" />
           </span>
         </div>
@@ -56,7 +58,7 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
               <Calendar size={12} aria-hidden="true" />
               {post.date}
             </span>
-            <span aria-hidden="true" className="text-white/20">
+            <span aria-hidden="true" className="text-line">
               /
             </span>
             <span className="inline-flex items-center gap-1.5">
@@ -74,7 +76,7 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
 
           <Link
             to={`/blog/${post.id}`}
-            className="group/link mt-6 inline-flex w-fit items-center gap-1.5 border-t border-white/[0.07] pt-5 text-sm font-medium text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
+            className="group/link mt-6 inline-flex w-fit items-center gap-1.5 border-t border-line pt-5 text-sm font-medium text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
           >
             Read article
             <ArrowUpRight

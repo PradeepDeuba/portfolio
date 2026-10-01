@@ -33,7 +33,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       }}
       className="group relative"
     >
-      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
+      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card transition-transform duration-slow ease-expo hover:-translate-y-1.5">
         <div className="relative aspect-[16/10] overflow-hidden" data-cursor="View">
           <img
             src={project.image}
@@ -45,13 +45,13 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
               loaded ? "opacity-100 blur-0" : "opacity-0 blur-lg"
             }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
 
-          <span className="absolute left-4 top-4 font-mono text-[11px] tracking-widest text-white/60 tnum">
+          <span className="absolute left-4 top-4 font-mono text-[11px] tracking-widest text-muted-foreground tnum">
             {String(index + 1).padStart(2, "0")}
           </span>
 
-          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo group-hover:opacity-100 group-hover:rotate-0 rotate-[-30deg]">
+          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-line bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo group-hover:opacity-100 group-hover:rotate-0 rotate-[-30deg]">
             <ArrowUpRight size={15} aria-hidden="true" />
           </span>
         </div>
@@ -61,7 +61,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {project.tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
+                className="rounded-full border border-line bg-panel px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
               >
                 {tag}
               </li>
@@ -75,7 +75,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {project.description}
           </p>
 
-          <div className="mt-6 flex items-center justify-between border-t border-white/[0.07] pt-5">
+          <div className="mt-6 flex items-center justify-between border-t border-line pt-5">
             {project.demoUrl ? (
               <Link
                 to={project.demoUrl}

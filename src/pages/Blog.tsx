@@ -3,12 +3,17 @@ import { Search } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import PageHeader from "../components/PageHeader";
 import BlogPost from "../components/BlogPost";
-import { categories, posts } from "@/data/posts";
+import { posts, topics } from "@/data/posts";
 import { cn } from "@/lib/utils";
 
+/**
+ * Filters by `topics` rather than the template's `category`. The real posts
+ * table has no category column, so topics are the editorial groupings noted in
+ * src/data/posts.ts.
+ */
 const Blog = () => {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeTopic, setActiveTopic] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -18,14 +23,14 @@ const Blog = () => {
         needle === "" ||
         post.title.toLowerCase().includes(needle) ||
         post.excerpt.toLowerCase().includes(needle);
-      const matchesCategory = activeCategory ? post.category === activeCategory : true;
-      return matchesQuery && matchesCategory;
+      const matchesTopic = activeTopic ? post.topics.includes(activeTopic) : true;
+      return matchesQuery && matchesTopic;
     });
-  }, [query, activeCategory]);
+  }, [query, activeTopic]);
 
   const filters = [
-    { label: "All Categories", value: null as string | null },
-    ...categories.map((category) => ({ label: category, value: category as string | null })),
+    { label: "All Topics", value: null as string | null },
+    ...topics.map((topic) => ({ label: topic, value: topic as string | null })),
   ];
 
   return (
@@ -33,8 +38,8 @@ const Blog = () => {
       <main id="main">
         <PageHeader
           eyebrow="Blog"
-          title="Blog & insights"
-          description="Explore our latest thoughts on technology, design, and innovation."
+          title="Notes from the bench"
+          description="Write-ups from projects I've actually built — the wiring decisions, the measurements, and what broke."
         />
 
         <section className="py-16 md:py-20">
@@ -54,30 +59,30 @@ const Blog = () => {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search articles..."
-                className="w-full rounded-full border border-white/[0.08] bg-white/[0.03] py-3.5 pl-11 pr-4 text-sm outline-none transition-colors duration-base ease-smooth placeholder:text-muted-foreground/70 focus:border-primary/50 focus:bg-white/[0.05]"
+                className="w-full rounded-full border border-line bg-panel py-3.5 pl-11 pr-4 text-sm outline-none transition-colors duration-base ease-smooth placeholder:text-muted-foreground/70 focus:border-primary/50"
               />
             </div>
 
             <div className="-mx-5 mt-6 px-5 sm:mx-0 sm:px-0">
               <div
                 role="group"
-                aria-label="Filter articles by category"
+                aria-label="Filter articles by topic"
                 className="hides-scrollbar flex gap-2 overflow-x-auto pb-1"
               >
                 {filters.map(({ label, value }) => {
-                  const isActive = activeCategory === value;
+                  const isActive = activeTopic === value;
 
                   return (
                     <button
                       key={label}
                       type="button"
-                      onClick={() => setActiveCategory(value)}
+                      onClick={() => setActiveTopic(value)}
                       aria-pressed={isActive}
                       className={cn(
                         "shrink-0 rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors duration-base ease-smooth",
                         isActive
                           ? "border-primary/50 bg-primary/15 text-foreground"
-                          : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:border-white/20 hover:text-foreground"
+                          : "border-line bg-panel text-muted-foreground hover:border-primary/50 hover:text-foreground"
                       )}
                     >
                       {label}
@@ -98,7 +103,7 @@ const Blog = () => {
                 ))}
               </div>
             ) : (
-              <div className="mt-8 rounded-2xl border border-white/[0.07] bg-card/40 px-6 py-20 text-center">
+              <div className="mt-8 rounded-2xl border border-line bg-card px-6 py-20 text-center">
                 <p className="text-muted-foreground">
                   No articles found matching your criteria.
                 </p>
@@ -106,7 +111,7 @@ const Blog = () => {
                   type="button"
                   onClick={() => {
                     setQuery("");
-                    setActiveCategory(null);
+                    setActiveTopic(null);
                   }}
                   className="link-underline mt-4 text-sm font-medium text-primary"
                 >
