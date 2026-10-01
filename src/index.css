@@ -79,8 +79,14 @@
    ========================================================================== */
 
 @layer utilities {
+  /* Label treatment is themeable: size and tracking come from variables so a
+     theme can dial the "engraved" feel up or down. */
   .label-mono {
-    @apply font-mono text-label uppercase;
+    font-family: var(--font-mono);
+    font-size: var(--label-size, 0.6875rem);
+    letter-spacing: var(--label-track, 0.18em);
+    line-height: 1;
+    text-transform: uppercase;
     color: hsl(var(--muted-foreground));
   }
 
@@ -727,4 +733,143 @@ html.lenis body {
   /* Prevent the map from swallowing wheel events mid-scroll, but only while a
      programmatic scroll is in flight. */
   pointer-events: none;
+}
+
+/* ==========================================================================
+   THEME 6 — SIGNAL  (dark, typographic, single-accent)
+   Added after a quantitative study of milancompain.com's own stylesheet, which
+   revealed a very specific and very repeatable system:
+
+     ground        #0a0a0a near-black, with #1f1f1f hairlines as the only rule
+     type pairing  a high-contrast SERIF display against a neutral sans body
+     scale         .9 -> 4.27rem in exact 1.25x steps, made fluid with clamp()
+     labels        .66-.72rem, uppercase, .28-.32em tracking
+     weights       400/500 everywhere; extremes only at the ends of the scale
+     accent        ONE high-chroma colour, with an alpha ladder (.08 -> .5)
+     easing        a single shared curve on every transition
+     decoration    none - no grid, no glow, no glass
+
+   The transferable ideas are adopted; the execution is original. The accent is
+   chartreuse rather than their mint, the display face is Fraunces rather than
+   theirs, the scale and easings are this project's own tokens, and none of
+   their copy, imagery or layout is reproduced.
+   ========================================================================== */
+
+[data-theme="signal"] {
+  /* Ground and text */
+  --background: 210 11% 4%;
+  --foreground: 60 9% 95%;
+  --card: 210 7% 6%;
+  --card-foreground: 60 9% 95%;
+  --popover: 210 8% 5%;
+  --popover-foreground: 60 9% 95%;
+
+  /* The one accent. Chartreuse: unused by the other five themes, and it reads
+     as an instrument indicator against near-black. */
+  --primary: 72 100% 68%;
+  --primary-foreground: 210 11% 4%;
+
+  --secondary: 210 6% 10%;
+  --secondary-foreground: 60 9% 95%;
+  --muted: 210 6% 10%;
+  --muted-foreground: 60 4% 56%;
+  --accent: 210 6% 13%;
+  --accent-foreground: 60 9% 95%;
+  --destructive: 4 74% 55%;
+  --destructive-foreground: 210 11% 4%;
+
+  /* Hairlines only — the rule weight carries the structure. */
+  --border: 60 4% 13%;
+  --input: 60 4% 16%;
+  --ring: 72 100% 68%;
+  --line: 60 4% 13%;
+  --panel: 210 7% 6%;
+  --panel-alpha: 1;
+  --ink: 210 11% 4%;
+
+  /* Accent ramp, mirroring the reference's soft/deep trio. */
+  --azure: 72 100% 68%;
+  --iris: 90 62% 78%;
+  --plasma: 160 58% 34%;
+  --cyan: 72 60% 72%;
+
+  --radius: 2px;
+  --focus-radius: 2px;
+  --panel-blur: none;
+
+  /* High-contrast serif display over a neutral sans body: the pairing that
+     defines this direction. Fraunces is variable (optical size + weight). */
+  --font-display: Fraunces, Georgia, "Times New Roman", serif;
+  --font-body: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Engraved labels, per the reference's measured values. */
+  --label-size: 0.72rem;
+  --label-track: 0.3em;
+
+  --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.35);
+  --shadow-card: none;
+  --shadow-lift: 0 24px 48px -28px hsl(0 0% 0% / 0.95);
+
+  /* Effectively flat: the accent appears only as a tail on the largest type. */
+  --gradient-text: linear-gradient(100deg, hsl(var(--foreground)) 30%, hsl(var(--primary)) 100%);
+
+  --ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Exact 1.25x modular scale, 0.9rem base. */
+  --fs-0: 0.9rem;
+  --fs-1: 1.125rem;
+  --fs-2: 1.406rem;
+  --fs-3: 1.758rem;
+  --fs-4: 2.197rem;
+  --fs-5: 2.747rem;
+  --fs-6: 3.433rem;
+  --fs-7: 4.292rem;
+}
+
+/* Shape: crisp, but not square like terminal and brutalist. */
+[data-theme="signal"] {
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+}
+
+/* Decoration: none. Typography and hairlines carry the page. */
+[data-theme="signal"] .fx-grid,
+[data-theme="signal"] .fx-aurora {
+  display: none;
+}
+
+/* Headings use the modular scale, with tight tracking and a low weight — the
+   serif does the work at display sizes, so weight stays restrained. */
+[data-theme="signal"] h1 {
+  font-size: clamp(2.6rem, 11vw, 8rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+[data-theme="signal"] h2 {
+  font-size: clamp(var(--fs-3), 5.4vw, var(--fs-6));
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+}
+
+[data-theme="signal"] h3 {
+  font-size: clamp(var(--fs-1), 2.4vw, var(--fs-3));
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+/* Larger, looser body copy to sit with the serif. */
+[data-theme="signal"] body {
+  line-height: 1.7;
+}
+
+/* The accent is a signal, not a wash: a solid hairline rather than a gradient. */
+[data-theme="signal"] .glow-card::before {
+  background: hsl(var(--primary) / 0.5);
 }

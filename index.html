@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="circuit">
+<html lang="en" data-theme="signal">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,21 +10,25 @@
       content="Based in Kathmandu, Nepal. IoT development, embedded firmware and full stack engineering — ESP32 hardware, sensors and the dashboards they report to."
     />
     <meta name="author" content="Pradeep Deuba" />
-    <meta name="theme-color" content="#03110c" />
+    <meta name="theme-color" content="#08090a" />
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
 
     <!--
-      Inter is loaded here rather than via @import in the stylesheet: an @import
-      blocks first paint and is discovered late, while a <link> in the head is
-      found by the preload scanner. The editorial and brutalist themes use system
-      serif/sans stacks instead, so this is only required by circuit and kinetic.
+      Loaded here rather than via @import in the stylesheet: an @import blocks
+      first paint and is discovered late, while a <link> in the head is found by
+      the preload scanner. Two families, one request:
+        Inter     body copy and labels for every theme
+        Fraunces  the high-contrast serif display used by the Signal theme
+      Fraunces is requested as a variable axis range, so one file covers the
+      whole optical-size and weight range. The editorial and brutalist themes
+      use system stacks and ignore both.
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap"
     />
 
     <!--

@@ -1,5 +1,5 @@
 /**
- * The five design directions.
+ * The six design directions.
  *
  * Each one is a distinct *premise*, not a colour swap — they differ in
  * typography, surface treatment, shape language, decoration and motion
@@ -10,7 +10,13 @@
  * This file only carries the metadata the switcher needs. Adding a theme means
  * adding an entry here and a matching token block in index.css.
  */
-export type ThemeId = "circuit" | "terminal" | "editorial" | "brutalist" | "kinetic";
+export type ThemeId =
+  | "signal"
+  | "circuit"
+  | "terminal"
+  | "editorial"
+  | "brutalist"
+  | "kinetic";
 
 export interface ThemeMeta {
   id: ThemeId;
@@ -59,9 +65,17 @@ export const THEMES: ThemeMeta[] = [
     mode: "dark",
     swatch: ["#06070b", "#8b5cf6"],
   },
+  {
+    id: "signal",
+    label: "Signal",
+    blurb:
+      "Near-black, one chartreuse accent, high-contrast serif display over a neutral sans, hairlines only. Typography does all the work.",
+    mode: "dark",
+    swatch: ["#08090a", "#d9ff5b"],
+  },
 ];
 
-export const DEFAULT_THEME: ThemeId = "circuit";
+export const DEFAULT_THEME: ThemeId = "signal";
 
 export const isThemeId = (value: string | null | undefined): value is ThemeId =>
   !!value && THEMES.some((theme) => theme.id === value);
