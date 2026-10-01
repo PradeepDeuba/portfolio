@@ -1,0 +1,13 @@
+# SPA fallback rewrite.
+#
+# This app uses client-side routing, so any deep link (/projects/ai-platform,
+# /blog/cloud-security, ...) must be served index.html and resolved by the
+# router. Without this file those URLs return a host-level 404 even though the
+# routes exist in the app.
+#
+# `200` makes it a rewrite rather than a redirect, so the URL is preserved.
+# Real files in dist/ (hashed JS/CSS, images, favicon) take precedence over
+# this rule on both Netlify and Cloudflare Pages, so assets are not shadowed.
+#
+# Recognised natively by: Netlify, Cloudflare Pages.
+/*  /index.html  200

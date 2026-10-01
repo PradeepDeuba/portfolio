@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Generated from src/data/projects.ts and src/data/posts.ts.
+  No <lastmod> is emitted: the template has no real publish dates to report and
+  inventing them would mislead crawlers. Add lastmod once posts have dates.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pradeepdeuba.com.np/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/ai-platform</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/fintech-dashboard</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/iot-platform</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/health-app</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/ecommerce-platform</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/education-portal</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/future-of-ai</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/ux-design-principles</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/cloud-security</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/microservices</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/typescript-tips</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/performance-optimization</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/about</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/contact</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/legal</loc>
+    <priority>0.3</priority>
+  </url>
+</urlset>

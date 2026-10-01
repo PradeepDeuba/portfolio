@@ -34,5 +34,5 @@ export const site = {
   ],
 } as const;
 
-/** Site URL used for absolute social/meta tags. TODO: set your production domain. */
-export const SITE_URL = "";
+/** Canonical production origin, used for absolute links and meta tags. */
+export const SITE_URL = "https://pradeepdeuba.com.np";
