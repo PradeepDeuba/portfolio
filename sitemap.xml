@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  GENERATED from src/data/projects.ts and src/data/posts.ts.
+  No <lastmod>: the source data has publish dates only for posts, and inventing
+  them for the other routes would mislead crawlers.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pradeepdeuba.com.np/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/about</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/contact</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/legal</loc>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/esp32-car</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/esp32-water-monitoring</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/diy-7-segment-clock</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/projects/oled-animation-esp32-c3</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/esp32-water-quality-monitoring</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/diy-7-segment-digital-clock</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/oled-animation-esp32-c3</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pradeepdeuba.com.np/blog/manual-dpf-regeneration-guide</loc>
+    <priority>0.7</priority>
+  </url>
+</urlset>

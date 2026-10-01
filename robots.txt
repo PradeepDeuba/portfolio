@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pradeepdeuba.com.np/sitemap.xml
