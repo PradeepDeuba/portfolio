@@ -1,188 +1,177 @@
-
-import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { ArrowRight, Code, Cpu, Globe, Lightbulb, Zap } from "lucide-react";
 import PageTransition from "../components/PageTransition";
-import ParticleBackground from "../components/ParticleBackground";
 import Hero from "../components/Hero";
+import { Reveal } from "../components/Reveal";
+import { Marquee } from "../components/Marquee";
+import { SectionHeading } from "../components/SectionHeading";
 import ProjectCard from "../components/ProjectCard";
-import { featuredProjects } from "@/data/projects";
+import { featuredProjects, projects } from "@/data/projects";
+import { staggerDelay } from "@/lib/motion";
 
 const services = [
   {
-    icon: <Code className="h-6 w-6" />,
+    icon: <Code className="h-5 w-5" aria-hidden="true" />,
     title: "Custom Software Development",
-    description: "Building tailored software solutions to address your specific business challenges and requirements."
+    description:
+      "Building tailored software solutions to address your specific business challenges and requirements.",
   },
   {
-    icon: <Globe className="h-6 w-6" />,
+    icon: <Globe className="h-5 w-5" aria-hidden="true" />,
     title: "Web Application Development",
-    description: "Creating responsive, intuitive web applications that provide seamless user experiences across devices."
+    description:
+      "Creating responsive, intuitive web applications that provide seamless user experiences across devices.",
   },
   {
-    icon: <Cpu className="h-6 w-6" />,
+    icon: <Cpu className="h-5 w-5" aria-hidden="true" />,
     title: "AI & Machine Learning",
-    description: "Implementing intelligent algorithms and data models to unlock insights and automate complex processes."
+    description:
+      "Implementing intelligent algorithms and data models to unlock insights and automate complex processes.",
   },
   {
-    icon: <Lightbulb className="h-6 w-6" />,
+    icon: <Lightbulb className="h-5 w-5" aria-hidden="true" />,
     title: "UX/UI Design",
-    description: "Designing user-centered interfaces that balance aesthetics with functionality for optimal user satisfaction."
+    description:
+      "Designing user-centered interfaces that balance aesthetics with functionality for optimal user satisfaction.",
   },
   {
-    icon: <Zap className="h-6 w-6" />,
+    icon: <Zap className="h-5 w-5" aria-hidden="true" />,
     title: "Performance Optimization",
-    description: "Enhancing application speed, responsiveness, and efficiency through careful optimization techniques."
-  }
+    description:
+      "Enhancing application speed, responsiveness, and efficiency through careful optimization techniques.",
+  },
 ];
 
-const Index = () => {
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
+/** Derived from the project catalogue so the strip can never drift from the data. */
+const techStack = Array.from(new Set(projects.flatMap((project) => project.tags)));
 
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -10% 0px"
-    };
+const Index = () => (
+  <PageTransition>
+    <main id="main">
+      <Hero />
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("active");
-        }
-      });
-    }, observerOptions);
+      {/* Technology marquee. Decorative, so it is hidden from assistive tech. */}
+      <div aria-hidden="true" className="border-y border-white/[0.07] py-7">
+        <Marquee items={techStack} durationSec={52} itemClassName="text-lg md:text-2xl text-white/25" />
+      </div>
 
-    const sections = document.querySelectorAll(".reveal-section");
-    sections.forEach(section => {
-      observer.observe(section);
-    });
+      {/* Services */}
+      <section className="relative py-24 md:py-32" aria-labelledby="services-heading">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+          <SectionHeading
+            eyebrow="Services"
+            title={<span id="services-heading">Innovative solutions for modern challenges</span>}
+            description="We provide end-to-end development services that help transform your ideas into powerful, scalable solutions."
+          />
 
-    return () => {
-      sections.forEach(section => {
-        observer.unobserve(section);
-      });
-    };
-  }, []);
-
-  return (
-    <PageTransition>
-      <ParticleBackground />
-      
-      <main className="relative">
-        <Hero />
-
-        {/* Services Section */}
-        <section
-          ref={servicesRef}
-          className="py-20 md:py-32 bg-secondary/50 relative overflow-hidden"
-        >
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <div className="reveal-section">
-              <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary mb-4">
-                  Services
-                </span>
-                <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                  Innovative Solutions for Modern Challenges
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  We provide end-to-end development services that help transform your ideas into powerful, scalable solutions.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {services.map((service, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary mb-5">
+          <ul className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service, index) => (
+              <Reveal
+                as="li"
+                key={service.title}
+                delay={staggerDelay(index)}
+                className="group relative"
+              >
+                <div className="glow-card flex h-full flex-col rounded-2xl border border-white/[0.07] bg-card/50 p-6 transition-transform duration-slow ease-expo hover:-translate-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-primary transition-colors duration-base ease-smooth group-hover:border-primary/40 group-hover:bg-primary/10">
                       {service.icon}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
-                    <p className="text-muted-foreground">{service.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          {/* Background shapes */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full -translate-x-1/2 translate-y-1/2 blur-3xl"></div>
-        </section>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="font-mono text-[11px] tracking-widest text-muted-foreground/50 tnum"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
 
-        {/* Projects Section */}
-        <section
-          ref={projectsRef}
-          className="py-20 md:py-32 relative"
-        >
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <div className="reveal-section">
-              <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16">
-                <div className="md:max-w-2xl">
-                  <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary mb-4">
-                    Projects
-                  </span>
-                  <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                    Featured Work
-                  </h2>
-                  <p className="text-muted-foreground text-lg">
-                    Explore our recent projects showcasing our expertise and innovative approaches to solving complex problems.
+                  <h3 className="mt-6 font-display text-lg font-semibold tracking-tight">
+                    {service.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {service.description}
                   </p>
                 </div>
-                <Link
-                  to="/projects"
-                  className="inline-flex items-center gap-2 mt-6 md:mt-0 text-primary hover:text-primary/80 transition-colors font-medium"
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Featured work */}
+      <section className="relative border-t border-white/[0.07] py-24 md:py-32" aria-labelledby="work-heading">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+          <SectionHeading
+            eyebrow="Projects"
+            title={<span id="work-heading">Featured work</span>}
+            description="Explore our recent projects showcasing our expertise and innovative approaches to solving complex problems."
+            action={
+              <Link
+                to="/projects"
+                className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-5 py-2.5 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10"
+              >
+                View all projects
+                <ArrowRight
+                  size={15}
+                  aria-hidden="true"
+                  className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
+                />
+              </Link>
+            }
+          />
+
+          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {featuredProjects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-24 md:py-28" aria-labelledby="cta-heading">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+          <Reveal>
+            <div className="glow-card relative overflow-hidden rounded-3xl panel px-6 py-16 text-center sm:px-12 md:py-20">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 grid-overlay opacity-40"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -top-24 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,hsl(var(--iris)/0.28),transparent_65%)] blur-3xl"
+              />
+
+              <div className="relative">
+                <h2
+                  id="cta-heading"
+                  className="mx-auto max-w-3xl font-display text-display-sm font-semibold tracking-tight"
                 >
-                  View All Projects <ArrowRight size={16} />
+                  Ready to build something amazing?
+                </h2>
+                <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  Whether you have a specific project in mind or just want to
+                  explore possibilities, we&rsquo;re here to help bring your ideas
+                  to life.
+                </p>
+                <Link
+                  to="/contact"
+                  className="group mt-9 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-base ease-expo hover:gap-3 hover:bg-primary/90"
+                >
+                  Start a conversation
+                  <ArrowRight
+                    size={16}
+                    aria-hidden="true"
+                    className="transition-transform duration-base ease-expo group-hover:translate-x-0.5"
+                  />
                 </Link>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredProjects.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} index={index} />
-                ))}
-              </div>
             </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-primary/10 to-blue-500/10">
-          <div className="max-w-5xl mx-auto px-6 lg:px-10 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
-              className="bg-card border border-border rounded-2xl px-6 py-14 md:p-14 glass-dark"
-            >
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                Ready to Build Something Amazing?
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-                Whether you have a specific project in mind or just want to explore possibilities, we're here to help bring your ideas to life.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-              >
-                Start a Conversation <ArrowRight size={16} />
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      </main>
-    </PageTransition>
-  );
-};
+          </Reveal>
+        </div>
+      </section>
+    </main>
+  </PageTransition>
+);
 
 export default Index;

@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Twitter, Mail } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUp, Github, Linkedin, Mail, Twitter } from "lucide-react";
 import { site } from "@/data/site";
+import { CopyEmail } from "@/components/CopyEmail";
+import { Marquee } from "@/components/Marquee";
+import { DURATION, EASE_EXPO } from "@/lib/motion";
 
 /**
- * All identity and contact details come from src/data/site.ts. Previously the
- * footer hard-coded a different email address from the one on the contact
- * page, and the three legal links pointed at routes that did not exist.
+ * Footer. All identity and contact details come from src/data/site.ts so there
+ * is a single place to edit them.
  */
 const Footer = () => {
+  const reduceMotion = useReducedMotion();
   const currentYear = new Date().getFullYear();
 
   const socials = [
@@ -17,43 +21,55 @@ const Footer = () => {
     { label: "Email", href: `mailto:${site.contact.email}`, Icon: Mail },
   ];
 
-  return (
-    <footer className="w-full bg-background border-t">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
-          <div className="md:col-span-2">
-            <Link to="/" className="text-2xl font-display font-semibold">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
-                {site.name}
-              </span>
-            </Link>
-            <p className="mt-4 text-muted-foreground max-w-md">
-              {site.tagline}
-            </p>
-            <div className="flex space-x-4 mt-6">
-              {socials.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground/70 hover:text-primary transition-colors"
-                  aria-label={label}
-                >
-                  <Icon size={20} />
-                </a>
-              ))}
-            </div>
-          </div>
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  };
 
-          <div>
-            <h3 className="font-medium text-foreground mb-4">Navigation</h3>
-            <ul className="space-y-2">
+  return (
+    <footer className="relative z-10 mt-24 border-t border-white/[0.07]">
+      {/* Oversized wordmark band. Decorative, so it is hidden from AT. */}
+      <div aria-hidden="true" className="border-b border-white/[0.07] py-8">
+        <Marquee
+          items={[site.name, site.tagline]}
+          durationSec={60}
+          itemClassName="text-3xl md:text-5xl text-white/[0.10]"
+          separator="/"
+        />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 lg:px-10">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: DURATION.slow, ease: EASE_EXPO }}
+            className="md:col-span-6"
+          >
+            <h2 className="font-display text-display-sm font-semibold tracking-tight">
+              Let&rsquo;s build something.
+            </h2>
+            <p className="mt-4 max-w-md text-muted-foreground">{site.tagline}</p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <CopyEmail />
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-base ease-smooth hover:bg-primary/90"
+              >
+                Start a project
+              </Link>
+            </div>
+          </motion.div>
+
+          <div className="md:col-span-3 md:col-start-8">
+            <h2 className="label-mono mb-5">Navigate</h2>
+            <ul className="space-y-3">
               {site.nav.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="link-underline text-sm text-muted-foreground transition-colors duration-base ease-smooth hover:text-foreground"
                   >
                     {item.name}
                   </Link>
@@ -62,36 +78,55 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
-            <h3 className="font-medium text-foreground mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/legal"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Legal &amp; Policies
-                </Link>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${site.contact.email}`}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {site.contact.email}
-                </a>
-              </li>
+          <div className="md:col-span-2">
+            <h2 className="label-mono mb-5">Elsewhere</h2>
+            <ul className="space-y-3">
+              {socials.map(({ label, href, Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors duration-base ease-smooth hover:text-foreground"
+                  >
+                    <Icon
+                      size={15}
+                      aria-hidden="true"
+                      className="transition-colors duration-base group-hover:text-primary"
+                    />
+                    {label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            &copy; {currentYear} {site.name}. All rights reserved.
+        <div className="mt-14 flex flex-col gap-5 border-t border-white/[0.07] pt-7 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-xs tracking-wide text-muted-foreground">
+            &copy; {currentYear} {site.name}
           </p>
-          <p className="text-sm text-muted-foreground mt-2 md:mt-0">
-            Designed with precision.
-          </p>
+
+          <div className="flex items-center gap-6">
+            <Link
+              to="/legal"
+              className="link-underline font-mono text-xs tracking-wide text-muted-foreground transition-colors duration-base ease-smooth hover:text-foreground"
+            >
+              Legal &amp; policies
+            </Link>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="group inline-flex items-center gap-2 font-mono text-xs tracking-wide text-muted-foreground transition-colors duration-base ease-smooth hover:text-foreground"
+            >
+              Back to top
+              <ArrowUp
+                size={13}
+                aria-hidden="true"
+                className="transition-transform duration-base ease-expo group-hover:-translate-y-0.5"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

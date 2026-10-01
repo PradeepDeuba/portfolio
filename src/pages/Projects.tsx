@@ -1,84 +1,97 @@
-
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
 import PageTransition from "../components/PageTransition";
+import PageHeader from "../components/PageHeader";
 import ProjectCard from "../components/ProjectCard";
 import { projects } from "@/data/projects";
+import { cn } from "@/lib/utils";
 
 const Projects = () => {
-  const [filter, setFilter] = useState<string>("all");
-  const allTags = Array.from(new Set(projects.flatMap(project => project.tags)));
-  
-  const filteredProjects = filter === "all" 
-    ? projects 
-    : projects.filter(project => project.tags.includes(filter));
+  const [activeTag, setActiveTag] = useState<string>("all");
+
+  const tags = useMemo(
+    () => Array.from(new Set(projects.flatMap((project) => project.tags))),
+    []
+  );
+
+  const filtered = useMemo(
+    () =>
+      activeTag === "all"
+        ? projects
+        : projects.filter((project) => project.tags.includes(activeTag)),
+    [activeTag]
+  );
+
+  const filters = [{ label: "All Projects", value: "all" }, ...tags.map((tag) => ({ label: tag, value: tag }))];
 
   return (
     <PageTransition>
-      <main className="pt-28 pb-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="max-w-3xl mx-auto text-center mb-8">
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-4xl md:text-5xl font-display font-bold mb-6"
-            >
-              Our Projects
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-muted-foreground text-lg"
-            >
-              Explore our portfolio of innovative solutions across various domains and technologies.
-            </motion.p>
-          </div>
+      <main id="main">
+        <PageHeader
+          eyebrow="Projects"
+          title="Our projects"
+          description="Explore our portfolio of innovative solutions across various domains and technologies."
+        />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-2 mb-12"
-          >
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filter === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary hover:bg-secondary/80 text-foreground"
-              }`}
-            >
-              All Projects
-            </button>
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => setFilter(tag)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filter === tag
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary hover:bg-secondary/80 text-foreground"
-                }`}
+        <section className="py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+            {/* Filter row. Horizontally scrollable on narrow viewports rather
+                than wrapping into a tall stack of pills. */}
+            <div className="-mx-5 px-5 sm:mx-0 sm:px-0">
+              <div
+                role="group"
+                aria-label="Filter projects by technology"
+                className="hides-scrollbar flex gap-2 overflow-x-auto pb-1"
               >
-                {tag}
-              </button>
-            ))}
-          </motion.div>
+                {filters.map(({ label, value }) => {
+                  const isActive = activeTag === value;
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
-
-          {filteredProjects.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">No projects found with the selected filter.</p>
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setActiveTag(value)}
+                      aria-pressed={isActive}
+                      className={cn(
+                        "shrink-0 rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors duration-base ease-smooth",
+                        isActive
+                          ? "border-primary/50 bg-primary/15 text-foreground"
+                          : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:border-white/20 hover:text-foreground"
+                      )}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Result count, announced politely for screen readers. */}
+            <p className="mt-6 font-mono text-xs tracking-wide text-muted-foreground" role="status">
+              {filtered.length} {filtered.length === 1 ? "project" : "projects"}
+            </p>
+
+            {filtered.length > 0 ? (
+              <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filtered.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-8 rounded-2xl border border-white/[0.07] bg-card/40 px-6 py-20 text-center">
+                <p className="text-muted-foreground">
+                  No projects found with the selected filter.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTag("all")}
+                  className="link-underline mt-4 text-sm font-medium text-primary"
+                >
+                  Clear filter
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
     </PageTransition>
   );

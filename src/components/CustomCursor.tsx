@@ -1,42 +1,56 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { SPRING_POINTER } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
-type HoverKind = "link" | "text" | "image" | null;
+type HoverKind = "link" | "text" | "image";
 
-const LINK_SELECTOR = "a, button, [role=button], input, textarea, select";
-const TEXT_SELECTOR = "p, h1, h2, h3, h4, h5, h6, span";
+const LINK_SELECTOR = "a, button, [role=button], input, textarea, select, label";
+const TEXT_SELECTOR = "p, h1, h2, h3, h4, h5, h6, span, li, dd, dt";
 const MEDIA_SELECTOR = "img, video, canvas, svg";
 
 /** Applied to <html> only while the custom cursor is actually rendered. */
 const HIDE_NATIVE_CURSOR_CLASS = "cursor-none-active";
 
-const HOVER_COLOR: Record<"link" | "text" | "image", string> = {
-  link: "#8B5CF6",
-  text: "#60A5FA",
-  image: "#EC4899",
+/**
+ * Full class strings per state, so Tailwind's scanner can see them. Colour is
+ * changed by a CSS transition rather than by animating a colour value in
+ * framer-motion — that keeps the palette in the design tokens, avoids colour
+ * parsing on every pointer move, and means the change is governed by the same
+ * reduced-motion rule as everything else.
+ */
+const RING_HOVER: Record<HoverKind, string> = {
+  link: "border-iris",
+  text: "border-azure",
+  image: "border-plasma",
 };
 
-const HOVER_SCALE: Record<"link" | "text" | "image", number> = {
-  link: 1.8,
-  text: 1.3,
-  image: 1.5,
+const DOT_HOVER: Record<HoverKind, string> = {
+  link: "bg-iris",
+  text: "bg-azure",
+  image: "bg-plasma",
 };
 
+const HOVER_SCALE: Record<HoverKind, number> = { link: 1.75, text: 1.25, image: 1.45 };
+
+/**
+ * Custom pointer.
+ *
+ * Renders only on hover-capable pointers and never against a reduced-motion
+ * preference — a spring-following cursor is exactly the motion that setting is
+ * meant to suppress.
+ */
 const CustomCursor = () => {
+  const prefersReducedMotion = useReducedMotion();
   const [enabled, setEnabled] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [clicked, setClicked] = useState(false);
-  const [hover, setHover] = useState<HoverKind>(null);
+  const [pressed, setPressed] = useState(false);
+  const [hover, setHover] = useState<HoverKind | null>(null);
   const [hidden, setHidden] = useState(true);
 
-  // Only run on hover-capable pointers, and never against a user's
-  // reduced-motion preference — a spring-following cursor is exactly the kind
-  // of motion that setting is meant to suppress.
   useEffect(() => {
     const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const motionQuery = window.matchMedia(
-      "(prefers-reduced-motion: no-preference)"
-    );
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: no-preference)");
 
     const sync = () => setEnabled(hoverQuery.matches && motionQuery.matches);
 
@@ -51,8 +65,6 @@ const CustomCursor = () => {
   }, []);
 
   // The native cursor is hidden only while this component is on screen.
-  // PageTransition used to apply `cursor-none` unconditionally, which would
-  // leave touch and reduced-motion users with no visible cursor at all.
   useEffect(() => {
     if (!enabled) return;
 
@@ -64,25 +76,24 @@ const CustomCursor = () => {
   useEffect(() => {
     if (!enabled) return;
 
-    const onMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+    const onMouseMove = (event: MouseEvent) => {
+      setPosition({ x: event.clientX, y: event.clientY });
       setHidden(false);
     };
-    const onMouseDown = () => setClicked(true);
-    const onMouseUp = () => setClicked(false);
+    const onMouseDown = () => setPressed(true);
+    const onMouseUp = () => setPressed(false);
     const onEnter = () => setHidden(false);
     const onLeave = () => setHidden(true);
 
     /**
-     * One delegated listener, rather than listeners bound to every element.
-     * The previous implementation walked the DOM once inside a
-     * `setTimeout(..., 1000)` and attached mouseenter/mouseleave to every
-     * a/button/p/span/img/canvas/svg. After any client-side route change the
-     * freshly mounted elements had no listeners, so the cursor silently
-     * stopped reacting to links, text and images.
+     * One delegated listener rather than listeners bound to every element. The
+     * original implementation walked the DOM once, one second after mount, and
+     * attached mouseenter/mouseleave to every element it found — so after any
+     * client-side route change the freshly mounted elements had none and the
+     * cursor silently stopped reacting.
      */
-    const onMouseOver = (e: MouseEvent) => {
-      const target = e.target as Element | null;
+    const onMouseOver = (event: MouseEvent) => {
+      const target = event.target as Element | null;
       if (!target || typeof target.closest !== "function") return;
 
       if (target.closest(LINK_SELECTOR)) setHover("link");
@@ -91,7 +102,7 @@ const CustomCursor = () => {
       else setHover(null);
     };
 
-    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mouseover", onMouseOver, { passive: true });
@@ -108,50 +119,29 @@ const CustomCursor = () => {
     };
   }, [enabled]);
 
-  if (!enabled) return null;
+  if (!enabled || prefersReducedMotion) return null;
 
-  const borderColor = hover ? HOVER_COLOR[hover] : HOVER_COLOR.text;
-  const ringScale = clicked ? 0.8 : hover ? HOVER_SCALE[hover] : 1;
+  const scale = pressed ? 0.8 : hover ? HOVER_SCALE[hover] : 1;
 
   return (
-    <>
+    <div aria-hidden="true" className={hidden ? "opacity-0" : "opacity-100"}>
       <motion.div
-        aria-hidden="true"
-        className={`pointer-events-none fixed top-0 left-0 z-[9999] h-7 w-7 rounded-full border-2 border-primary mix-blend-difference ${
-          hidden ? "opacity-0" : "opacity-100"
-        }`}
-        animate={{
-          x: position.x - 16,
-          y: position.y - 16,
-          scale: ringScale,
-          borderColor,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 800,
-          damping: 20,
-          mass: 0.3,
-        }}
+        className={cn(
+          "pointer-events-none fixed left-0 top-0 z-[9999] h-7 w-7 rounded-full border-2 mix-blend-difference transition-colors duration-base ease-smooth",
+          hover ? RING_HOVER[hover] : "border-azure"
+        )}
+        animate={{ x: position.x - 14, y: position.y - 14, scale }}
+        transition={SPRING_POINTER}
       />
       <motion.div
-        aria-hidden="true"
-        className={`pointer-events-none fixed top-0 left-0 z-[9999] h-3 w-3 rounded-full bg-primary mix-blend-difference ${
-          hidden ? "opacity-0" : "opacity-100"
-        }`}
-        animate={{
-          x: position.x - 6,
-          y: position.y - 6,
-          scale: clicked ? 1.2 : 1,
-          backgroundColor: borderColor,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 800,
-          damping: 20,
-          mass: 0.2,
-        }}
+        className={cn(
+          "pointer-events-none fixed left-0 top-0 z-[9999] h-2.5 w-2.5 rounded-full mix-blend-difference transition-colors duration-base ease-smooth",
+          hover ? DOT_HOVER[hover] : "bg-azure"
+        )}
+        animate={{ x: position.x - 5, y: position.y - 5, scale: pressed ? 1.3 : 1 }}
+        transition={SPRING_POINTER}
       />
-    </>
+    </div>
   );
 };
 

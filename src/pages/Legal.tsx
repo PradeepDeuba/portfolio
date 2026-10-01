@@ -1,73 +1,76 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { FileText } from "lucide-react";
 import PageTransition from "../components/PageTransition";
+import PageHeader from "../components/PageHeader";
+import { Reveal } from "../components/Reveal";
 import { site } from "@/data/site";
 
 /**
- * Previously the footer linked to /privacy, /terms and /cookies — none of which
+ * The footer previously linked to /privacy, /terms and /cookies — none of which
  * had a route, so all three rendered the 404 page. Until real policy text is
- * written, those three links now point here instead of failing.
+ * written those links point here.
  *
  * TODO: replace this page with your actual policies. Nothing here is legal
  * advice or a real policy — it exists so the links resolve.
  */
-const Legal = () => {
-  return (
-    <PageTransition>
-      <main className="pt-28 pb-20">
-        <div className="max-w-3xl mx-auto px-6 lg:px-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-6">
-              <FileText size={24} />
-            </span>
+const documents = ["Privacy Policy", "Terms of Service", "Cookie Policy"];
 
-            <h1 className="text-3xl md:text-5xl font-display font-bold mb-6">
-              Legal
-            </h1>
+const Legal = () => (
+  <PageTransition>
+    <main id="main">
+      <PageHeader
+        eyebrow="Legal"
+        title="Legal"
+        description="The legal documents for this site have not been published yet."
+      />
 
-            <p className="text-lg text-muted-foreground mb-10">
-              The legal documents for this site have not been published yet.
-            </p>
-
-            <div className="rounded-xl border border-border bg-card p-6 mb-6">
-              <h2 className="text-lg font-semibold mb-3">
+      <section className="py-16 md:py-20">
+        <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-10">
+          <Reveal>
+            <div className="rounded-2xl border border-white/[0.07] bg-card/50 p-6 sm:p-8">
+              <h2 className="flex items-center gap-3 font-display text-lg font-semibold tracking-tight">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-primary">
+                  <FileText size={18} aria-hidden="true" />
+                </span>
                 Documents still to be added
               </h2>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Cookie Policy</li>
+
+              <ul className="mt-6 divide-y divide-white/[0.06] border-t border-white/[0.06]">
+                {documents.map((document) => (
+                  <li key={document} className="py-3.5 text-muted-foreground">
+                    {document}
+                  </li>
+                ))}
               </ul>
             </div>
+          </Reveal>
 
+          <Reveal delay={0.08} className="mt-8">
             <p className="text-muted-foreground">
               If you need to get in touch about how your data is handled in the
               meantime, email{" "}
               <a
                 href={`mailto:${site.contact.email}`}
-                className="text-primary hover:text-primary/80 transition-colors"
+                className="link-underline text-primary"
               >
                 {site.contact.email}
               </a>
               .
             </p>
+          </Reveal>
 
+          <Reveal delay={0.14} className="mt-12">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 mt-10 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
             >
               Return home
             </Link>
-          </motion.div>
+          </Reveal>
         </div>
-      </main>
-    </PageTransition>
-  );
-};
+      </section>
+    </main>
+  </PageTransition>
+);
 
 export default Legal;

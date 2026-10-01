@@ -1,161 +1,240 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { site } from "@/data/site";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DURATION, EASE_EXPO, SPRING_SOFT } from "@/lib/motion";
 
 /**
- * A ripple is scoped to the nav item it was created in. Previously a single
- * shared array was rendered inside every item, so clicking one link drew a
- * ripple in all of them.
- */
-interface Ripple {
-  path: string;
-  x: number;
-  y: number;
-  id: number;
-}
-
-const rippleVariants = {
-  initial: { opacity: 0, scale: 0 },
-  animate: {
-    opacity: [0, 1, 0],
-    scale: 5,
-    transition: { duration: 0.6 },
-  },
-};
-
-/**
- * Navigation. The dropdown is the only navigation control for every viewport
- * width — the previous code also carried a mobile menu button and panel, but
- * both were permanently hidden (`hidden` plus `md:hidden`), so ~70 lines of
- * state, markup and an AnimatePresence block were unreachable. Removed.
+ * Site header.
+ *
+ * Responsive strategy: inline links from `lg` up, and a full-screen sheet below
+ * that. The previous version used a dropdown menu at every viewport width,
+ * which gave a 5-page site no persistent navigation on desktop and a cramped
+ * control on mobile.
+ *
+ * Accessibility: `aria-expanded` on the toggle, Escape closes the sheet, body
+ * scroll is locked while it is open, focus returns to the toggle on close, and
+ * the active route is marked with `aria-current`.
  */
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [ripple, setRipple] = useState<Ripple | null>(null);
-  const rippleTimeout = useRef<number | undefined>(undefined);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const reduceMotion = useReducedMotion();
+
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 180,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-
+    const handleScroll = () => setScrolled(window.scrollY > 12);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => () => window.clearTimeout(rippleTimeout.current), []);
+  // Close the sheet whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
-  const handleCreateRipple = (
-    path: string,
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+  // Lock background scroll and wire up Escape while the sheet is open.
+  useEffect(() => {
+    if (!menuOpen) return;
 
-    setRipple({
-      path,
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      id: Date.now(),
-    });
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
 
-    window.clearTimeout(rippleTimeout.current);
-    rippleTimeout.current = window.setTimeout(() => setRipple(null), 600);
-  };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+
+    // Move focus into the sheet so keyboard and screen-reader users land there.
+    const firstLink = sheetRef.current?.querySelector<HTMLAnchorElement>("a");
+    firstLink?.focus();
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = overflow;
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 lg:px-10 py-5",
-        {
-          "bg-black/80 backdrop-blur-md shadow-sm": isScrolled,
-          "bg-transparent": !isScrolled,
-        }
+    <>
+      {/* Scroll progress. Purely decorative, so it is hidden from AT. */}
+      {!reduceMotion && (
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleX: progress }}
+          className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-gradient-iris"
+        />
       )}
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link
-          to="/"
-          className="text-xl md:text-2xl font-display font-semibold"
-          aria-label={`${site.name} home`}
-        >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
-            {site.name}
-          </span>
-        </Link>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            aria-label="Open navigation menu"
-            className="flex items-center text-white hover:text-primary transition-colors bg-black/50 px-3 py-2 rounded-md border border-white/10"
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-base ease-smooth",
+          scrolled
+            ? "panel border-x-0 border-t-0 border-b"
+            : "border-b border-transparent bg-transparent"
+        )}
+      >
+        <nav
+          aria-label="Primary"
+          className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-10"
+        >
+          <Link
+            to="/"
+            onClick={closeMenu}
+            className="group flex items-center gap-2.5"
+            aria-label={`${site.name} — home`}
           >
-            <span className="mr-1">Menu</span>
-            <ChevronDown size={16} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-black/90 backdrop-blur-md border border-white/10 shadow-lg rounded-md z-50">
+            <span
+              aria-hidden="true"
+              className="relative flex h-2 w-2 shrink-0 items-center justify-center"
+            >
+              <span className="absolute inset-0 rounded-full bg-primary" />
+              <span className="absolute inset-0 rounded-full bg-primary animate-pulse-ring" />
+            </span>
+            <span className="font-display text-lg font-semibold tracking-tight">
+              <span className="text-gradient">{site.name}</span>
+            </span>
+          </Link>
+
+          {/* Desktop / large-tablet inline navigation */}
+          <ul className="hidden items-center gap-1 lg:flex">
             {site.nav.map((item) => {
               const isCurrent = location.pathname === item.path;
 
               return (
-                <DropdownMenuItem key={item.name} className="focus:bg-gray-800">
+                <li key={item.name}>
                   <Link
                     to={item.path}
                     aria-current={isCurrent ? "page" : undefined}
                     className={cn(
-                      "w-full text-sm font-medium relative flex items-center py-1.5 px-3",
-                      isCurrent
-                        ? "text-primary"
-                        : "text-white/80 hover:text-white"
+                      "relative block rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-base ease-smooth",
+                      isCurrent ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     )}
-                    onClick={(e) => handleCreateRipple(item.path, e)}
                   >
                     {item.name}
                     {isCurrent && (
-                      <motion.div
-                        className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full"
-                        layoutId="navbar-indicator"
-                        transition={{
-                          type: "spring",
-                          bounce: 0.25,
-                          duration: 0.5,
-                        }}
-                      />
-                    )}
-
-                    {ripple?.path === item.path && (
                       <motion.span
-                        key={ripple.id}
+                        layoutId="nav-active"
                         aria-hidden="true"
-                        className="absolute bg-white/20 rounded-full pointer-events-none"
-                        style={{
-                          left: ripple.x,
-                          top: ripple.y,
-                          width: 4,
-                          height: 4,
-                          marginLeft: -2,
-                          marginTop: -2,
-                        }}
-                        initial="initial"
-                        animate="animate"
-                        variants={rippleVariants}
+                        className="absolute inset-0 -z-10 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/10"
+                        transition={reduceMotion ? { duration: 0 } : SPRING_SOFT}
                       />
                     )}
                   </Link>
-                </DropdownMenuItem>
+                </li>
               );
             })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </header>
+          </ul>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/contact"
+              className="group relative hidden overflow-hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 sm:block"
+            >
+              <span className="relative z-10">Start a project</span>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-white/10 opacity-0 transition-opacity duration-base group-hover:opacity-100 group-hover:animate-shimmer"
+              />
+            </Link>
+
+            <button
+              ref={toggleRef}
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-foreground transition-colors duration-base ease-smooth hover:border-primary/40 hover:bg-primary/10 lg:hidden"
+            >
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile / tablet sheet */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-nav"
+            ref={sheetRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0.15 : DURATION.base, ease: EASE_EXPO }}
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl lg:hidden"
+          >
+            <div className="flex h-full flex-col justify-center px-6 pb-16 pt-20 sm:px-10">
+              <p className="label-mono mb-8">Navigation</p>
+
+              <ul className="space-y-1">
+                {site.nav.map((item, index) => {
+                  const isCurrent = location.pathname === item.path;
+
+                  return (
+                    <motion.li
+                      key={item.name}
+                      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.45,
+                        delay: reduceMotion ? 0 : 0.04 + index * 0.06,
+                        ease: EASE_EXPO,
+                      }}
+                      className="border-b border-white/[0.06]"
+                    >
+                      <Link
+                        to={item.path}
+                        onClick={closeMenu}
+                        aria-current={isCurrent ? "page" : undefined}
+                        className={cn(
+                          "flex items-baseline justify-between py-4 font-display text-display-sm font-semibold tracking-tight transition-colors duration-base ease-smooth",
+                          isCurrent ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {item.name}
+                        <span className="label-mono tnum">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </Link>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+
+              <motion.a
+                href={`mailto:${site.contact.email}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: reduceMotion ? 0 : 0.4 }}
+                className="label-mono mt-10 link-underline w-fit"
+              >
+                {site.contact.email}
+              </motion.a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

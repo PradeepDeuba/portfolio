@@ -15,13 +15,6 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
-const actionTypes = {
-  ADD_TOAST: "ADD_TOAST",
-  UPDATE_TOAST: "UPDATE_TOAST",
-  DISMISS_TOAST: "DISMISS_TOAST",
-  REMOVE_TOAST: "REMOVE_TOAST",
-} as const
-
 let count = 0
 
 function genId() {
@@ -29,7 +22,19 @@ function genId() {
   return count.toString()
 }
 
-type ActionType = typeof actionTypes
+/**
+ * Previously `const actionTypes = {...} as const` existed solely so this type
+ * could be derived with `typeof actionTypes`. The value was never read at
+ * runtime — the reducer below switches on string literals — so it is declared
+ * as a type with the same shape. That keeps every `ActionType["..."]` index in
+ * the `Action` union working exactly as before, without an unused binding.
+ */
+type ActionType = {
+  ADD_TOAST: "ADD_TOAST"
+  UPDATE_TOAST: "UPDATE_TOAST"
+  DISMISS_TOAST: "DISMISS_TOAST"
+  REMOVE_TOAST: "REMOVE_TOAST"
+}
 
 type Action =
   | {

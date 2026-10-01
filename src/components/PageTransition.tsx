@@ -1,65 +1,38 @@
-import { ReactNode } from "react";
-import { motion } from "framer-motion";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { DURATION, EASE_EXPO, EASE_SMOOTH } from "@/lib/motion";
 
 interface PageTransitionProps {
   children: ReactNode;
 }
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-    scale: 0.98,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  },
-  out: {
-    opacity: 0,
-    y: -20,
-    scale: 0.98,
-  },
-};
-
-const pageTransition = {
-  type: "spring",
-  stiffness: 100,
-  damping: 15,
-  mass: 0.8,
-};
-
 /**
- * Purely presentational. This component used to also mutate
- * documentElement/body on mount and undo some of it on unmount, which fought
- * with the equivalent effect in App.tsx. Theme and page classes now live in
- * index.html, so there is nothing imperative left to do here.
+ * Route transition wrapper, used with AnimatePresence `mode="wait"` in App.tsx.
+ *
+ * Kept purely presentational: it no longer writes to documentElement/body on
+ * mount, which previously fought with an identical effect in App.tsx. Theme and
+ * page classes live in index.html.
+ *
+ * Under reduced motion the translate is dropped and the cross-fade shortened,
+ * so navigation stays immediate rather than sliding.
  */
-const PageTransition = ({ children }: PageTransitionProps) => (
-  <motion.div
-    initial="initial"
-    animate="in"
-    exit="out"
-    variants={pageVariants}
-    transition={pageTransition}
-    className="min-h-screen w-full overflow-x-hidden bg-black text-white"
-  >
-    {/* Gradient orbs for background effect */}
-    <div
-      aria-hidden="true"
-      className="fixed -top-64 -right-64 w-[40rem] h-[40rem] bg-purple-500/5 rounded-full blur-3xl pointer-events-none z-0"
-    />
-    <div
-      aria-hidden="true"
-      className="fixed -bottom-64 -left-64 w-[40rem] h-[40rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0"
-    />
-    <div
-      aria-hidden="true"
-      className="fixed top-1/3 left-1/4 w-[20rem] h-[20rem] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none z-0 animate-float"
-    />
-    {children}
-  </motion.div>
-);
+const PageTransition = ({ children }: PageTransitionProps) => {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: reduceMotion ? 0 : -10 }}
+      transition={{
+        duration: reduceMotion ? 0.18 : DURATION.page,
+        ease: reduceMotion ? EASE_SMOOTH : EASE_EXPO,
+      }}
+      className="relative z-10 min-h-screen w-full overflow-x-hidden"
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export default PageTransition;

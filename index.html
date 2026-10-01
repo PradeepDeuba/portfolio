@@ -21,6 +21,19 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
 
     <!--
+      Inter is loaded here rather than via @import in the stylesheet: an @import
+      blocks first paint and is discovered late, while a <link> in the head is
+      found by the preload scanner. Preconnect removes the extra DNS + TLS
+      round-trip to the font host.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+
+    <!--
       Open Graph / Twitter. og:image and og:url MUST be absolute URLs —
       the template previously used a relative "/og-image.png", which most
       crawlers cannot resolve.
@@ -44,7 +57,7 @@
     <link rel="canonical" href="https://pradeepdeuba.com.np/" />
   </head>
 
-  <body class="custom-scrollbar subtle-scanlines">
+  <body class="custom-scrollbar grain">
     <div id="root"></div>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>

@@ -1,10 +1,10 @@
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import AmbientBackground from "./components/AmbientBackground";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import CustomCursor from "./components/CustomCursor";
@@ -19,14 +19,21 @@ import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
 /**
- * Reset the scroll position on navigation. Without this, opening a detail page
- * from a scrolled listing lands you halfway down the new page.
+ * Reset scroll position on navigation, instantly.
+ *
+ * index.css sets `scroll-behavior: smooth` for anchor links, which would also
+ * make this programmatic jump animate the whole page on every route change.
+ * Setting it to `auto` for the duration of the call keeps the reset immediate.
  */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    const root = document.documentElement;
+    const previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
     window.scrollTo(0, 0);
+    root.style.scrollBehavior = previous;
   }, [pathname]);
 
   return null;
@@ -38,7 +45,9 @@ const AppRoutes = () => {
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+      {/* Navbar is mounted once, in App — see the note there. Rendering it here
+          as well produced two identical navigation landmarks, two scroll
+          listeners and two aria-current markers for the active route. */}
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
@@ -57,25 +66,36 @@ const AppRoutes = () => {
   );
 };
 
-const queryClient = new QueryClient();
-
 /**
- * Dark mode is no longer toggled here. It is declared once as `class="dark"`
- * on <html> in index.html, which also removes the flash of light theme on
- * first paint. Previously two separate effects in this file wrote to
- * documentElement/body, and one component's cleanup undid the other's work.
+ * Dark mode is declared once as `class="dark"` on <html> in index.html, so no
+ * effect here writes to documentElement or body.
+ *
+ * QueryClientProvider has been removed: @tanstack/react-query was mounted around
+ * the app but no component ever called useQuery, useMutation or useQueryClient,
+ * so it was pure bundle weight.
  */
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner position="top-right" theme="dark" />
-      <BrowserRouter>
-        <CustomCursor />
-        <AppRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <TooltipProvider>
+    <Toaster />
+    <Sonner position="top-right" theme="dark" />
+    <BrowserRouter>
+      <AmbientBackground />
+      <CustomCursor />
+
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
+
+      {/* Mounted here rather than inside AppRoutes so it sits outside
+          AnimatePresence and therefore does not re-animate on every route
+          change — it persists while the page content cross-fades. */}
+      <Navbar />
+      <AppRoutes />
+    </BrowserRouter>
+  </TooltipProvider>
 );
 
 export default App;

@@ -23,7 +23,17 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
+    // shadcn/ui primitives export their CVA variant maps alongside the
+    // component by design, which this rule flags. They are vendored upstream
+    // files, so the rule is switched off for that directory rather than
+    // rewriting them. The six warnings this previously produced all came from
+    // files that are not reachable from src/main.tsx.
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   }
 );

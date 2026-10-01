@@ -1,83 +1,112 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
 import type { Project } from "@/data/projects";
+import { DURATION, EASE_EXPO, staggerDelay } from "@/lib/motion";
 
 interface ProjectCardProps {
   project: Project;
   index: number;
 }
 
+/**
+ * Project tile.
+ *
+ * Hover state animates only `transform`, `opacity` and `border-color`; the
+ * gradient hairline is a pseudo-element on `.glow-card` so no box-shadow is
+ * interpolated. The image zoom is a CSS transition, not a JS animation.
+ */
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group bg-card border border-border rounded-xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-all duration-300"
+    <motion.article
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{
+        duration: DURATION.slow,
+        delay: reduceMotion ? 0 : staggerDelay(index),
+        ease: EASE_EXPO,
+      }}
+      className="group relative"
     >
-      <div className="relative overflow-hidden w-full pt-[56.25%]">
-        <div className="image-blur-wrapper absolute inset-0">
+      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
+        <div className="relative aspect-[16/10] overflow-hidden">
           <img
             src={project.image}
             alt={project.title}
-            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-              imageLoaded ? "image-blur loaded" : "image-blur"
-            }`}
             loading="lazy"
             decoding="async"
-            onLoad={() => setImageLoaded(true)}
+            onLoad={() => setLoaded(true)}
+            className={`h-full w-full object-cover transition-[transform,filter,opacity] duration-slow ease-expo group-hover:scale-[1.04] ${
+              loaded ? "opacity-100 blur-0" : "opacity-0 blur-lg"
+            }`}
           />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2.5 py-1 text-xs font-medium rounded-full bg-primary/70 text-white backdrop-blur-sm"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80" />
 
-      <div className="flex flex-col flex-grow p-5">
-        <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
-          {project.title}
-        </h3>
-        <p className="text-muted-foreground text-sm mb-5 flex-grow">
-          {project.description}
-        </p>
-        
-        <div className="flex justify-between items-center mt-auto pt-4 border-t border-border">
-          {project.demoUrl && (
-            <Link
-              to={project.demoUrl}
-              className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              View Project <ArrowUpRight size={16} className="ml-1" />
-            </Link>
-          )}
-          
-          {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground/70 hover:text-primary transition-colors"
-              aria-label="View on GitHub"
-            >
-              <Github size={18} />
-            </a>
-          )}
+          <span className="absolute left-4 top-4 font-mono text-[11px] tracking-widest text-white/60 tnum">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+
+          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo group-hover:opacity-100 group-hover:rotate-0 rotate-[-30deg]">
+            <ArrowUpRight size={15} aria-hidden="true" />
+          </span>
+        </div>
+
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <ul className="mb-4 flex flex-wrap gap-2">
+            {project.tags.map((tag) => (
+              <li
+                key={tag}
+                className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+
+          <h3 className="font-display text-xl font-semibold tracking-tight transition-colors duration-base ease-smooth group-hover:text-primary">
+            {project.title}
+          </h3>
+          <p className="mt-2.5 flex-1 text-sm leading-relaxed text-muted-foreground">
+            {project.description}
+          </p>
+
+          <div className="mt-6 flex items-center justify-between border-t border-white/[0.07] pt-5">
+            {project.demoUrl ? (
+              <Link
+                to={project.demoUrl}
+                className="group/link inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
+              >
+                View project
+                <ArrowUpRight
+                  size={15}
+                  aria-hidden="true"
+                  className="transition-transform duration-base ease-expo group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                />
+              </Link>
+            ) : (
+              <span />
+            )}
+
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${project.title} source code on GitHub`}
+                className="text-muted-foreground transition-colors duration-base ease-smooth hover:text-primary"
+              >
+                <Github size={17} aria-hidden="true" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 };
 

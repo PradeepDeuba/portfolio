@@ -1,14 +1,18 @@
 import { Link, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import BlogPost from "../components/BlogPost";
+import { Reveal } from "../components/Reveal";
+import { SectionHeading } from "../components/SectionHeading";
 import NotFound from "./NotFound";
 import { getPostById, posts } from "@/data/posts";
+import { DURATION, EASE_EXPO } from "@/lib/motion";
 
 const BlogDetail = () => {
   const { id } = useParams<{ id: string }>();
   const post = getPostById(id);
+  const reduceMotion = useReducedMotion();
 
   if (!post) {
     return <NotFound />;
@@ -18,70 +22,100 @@ const BlogDetail = () => {
 
   return (
     <PageTransition>
-      <main className="pt-28 pb-20">
-        <div className="max-w-3xl mx-auto px-6 lg:px-10">
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-10"
-          >
-            <ArrowLeft size={16} /> All Articles
-          </Link>
+      <main id="main">
+        <article className="pt-32 sm:pt-36">
+          <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-10">
+            <motion.div
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.base, ease: EASE_EXPO }}
+            >
+              <Link
+                to="/blog"
+                className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors duration-base ease-smooth hover:text-foreground"
+              >
+                <ArrowLeft
+                  size={14}
+                  aria-hidden="true"
+                  className="transition-transform duration-base ease-expo group-hover:-translate-x-0.5"
+                />
+                All articles
+              </Link>
+            </motion.div>
 
-          <motion.article
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary mb-5">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: DURATION.base, delay: reduceMotion ? 0 : 0.06 }}
+              className="label-mono mt-8"
+            >
               {post.category}
-            </span>
+            </motion.p>
 
-            <h1 className="text-3xl md:text-5xl font-display font-bold leading-tight mb-6">
+            <motion.h1
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.slow, delay: reduceMotion ? 0 : 0.1, ease: EASE_EXPO }}
+              className="mt-5 font-display text-display-sm font-semibold tracking-tight"
+            >
               {post.title}
-            </h1>
+            </motion.h1>
 
-            <div className="flex items-center text-sm text-muted-foreground mb-10">
-              <span className="flex items-center">
-                <Calendar size={14} className="mr-1" /> {post.date}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: DURATION.base, delay: reduceMotion ? 0 : 0.16 }}
+              className="mt-6 flex items-center gap-3 font-mono text-xs tracking-wide text-muted-foreground"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar size={13} aria-hidden="true" />
+                {post.date}
               </span>
-              <span className="mx-2">&bull;</span>
-              <span className="flex items-center">
-                <Clock size={14} className="mr-1" /> {post.readTime}
+              <span aria-hidden="true" className="text-white/20">
+                /
               </span>
-            </div>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock size={13} aria-hidden="true" />
+                {post.readTime}
+              </span>
+            </motion.div>
+          </div>
 
-            <div className="relative rounded-2xl overflow-hidden border border-border aspect-video mb-10">
+          <Reveal className="mx-auto mt-14 max-w-4xl px-5 sm:px-6 lg:px-10">
+            <div className="glow-card relative overflow-hidden rounded-3xl border border-white/[0.07]">
               <img
                 src={post.image}
                 alt={post.title}
-                className="w-full h-full object-cover"
+                className="aspect-[16/9] w-full object-cover"
               />
             </div>
+          </Reveal>
 
-            <p className="text-lg text-foreground/90 leading-relaxed mb-6">
-              {post.excerpt}
-            </p>
+          <div className="mx-auto mt-14 max-w-3xl px-5 sm:px-6 lg:px-10">
+            <Reveal>
+              <p className="text-lg leading-relaxed text-foreground/90">{post.excerpt}</p>
+            </Reveal>
 
             {post.body?.map((paragraph, index) => (
-              <p
-                key={index}
-                className="text-muted-foreground leading-relaxed mb-6"
-              >
-                {paragraph}
-              </p>
+              <Reveal key={index} delay={0.04 * index}>
+                <p className="mt-6 leading-relaxed text-muted-foreground">{paragraph}</p>
+              </Reveal>
             ))}
-          </motion.article>
-        </div>
+          </div>
+        </article>
 
         {related.length > 0 && (
-          <section className="max-w-7xl mx-auto px-6 lg:px-10 mt-24">
-            <h2 className="text-2xl md:text-3xl font-display font-bold mb-10">
-              More Articles
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {related.map((item, index) => (
-                <BlogPost key={item.id} post={item} index={index} />
-              ))}
+          <section className="mt-28 border-t border-white/[0.07] pt-20" aria-labelledby="more-articles">
+            <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+              <SectionHeading
+                eyebrow="More"
+                title={<span id="more-articles">More articles</span>}
+              />
+              <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {related.map((item, index) => (
+                  <BlogPost key={item.id} post={item} index={index} />
+                ))}
+              </div>
             </div>
           </section>
         )}

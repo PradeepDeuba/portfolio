@@ -1,150 +1,89 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Calendar, Clock } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Calendar, Clock } from "lucide-react";
 import type { Post } from "@/data/posts";
+import { DURATION, EASE_EXPO, staggerDelay } from "@/lib/motion";
 
 interface BlogPostProps {
   post: Post;
   index: number;
 }
 
+/** Blog tile. Same hover/entry contract as ProjectCard for visual consistency. */
 const BlogPost = ({ post, index }: BlogPostProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  const cardVariants = {
-    initial: { y: 50, opacity: 0 },
-    animate: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        duration: 0.6, 
-        delay: index * 0.1,
-        ease: [0.25, 0.1, 0.25, 1.0]
-      }
-    },
-    hover: {
-      y: -5,
-      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 20
-      }
-    }
-  };
-
-  const imageVariants = {
-    hover: {
-      scale: 1.05,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.1, 0.25, 1.0]
-      }
-    }
-  };
-
-  const titleVariants = {
-    hover: {
-      color: "hsl(var(--primary))",
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
+  const [loaded, setLoaded] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   return (
     <motion.article
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      variants={cardVariants}
-      className="group bg-card border border-border rounded-xl overflow-hidden flex flex-col h-full shadow-sm"
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{
+        duration: DURATION.slow,
+        delay: reduceMotion ? 0 : staggerDelay(index),
+        ease: EASE_EXPO,
+      }}
+      className="group relative"
     >
-      <div className="relative overflow-hidden w-full pt-[56.25%]">
-        <div className="image-blur-wrapper absolute inset-0">
-          <motion.img
-            variants={imageVariants}
+      <div className="glow-card flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/60 transition-transform duration-slow ease-expo hover:-translate-y-1.5">
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <img
             src={post.image}
             alt={post.title}
-            className={`absolute inset-0 w-full h-full object-cover ${
-              imageLoaded ? "image-blur loaded" : "image-blur"
-            }`}
             loading="lazy"
             decoding="async"
-            onLoad={() => setImageLoaded(true)}
+            onLoad={() => setLoaded(true)}
+            className={`h-full w-full object-cover transition-[transform,filter,opacity] duration-slow ease-expo group-hover:scale-[1.04] ${
+              loaded ? "opacity-100 blur-0" : "opacity-0 blur-lg"
+            }`}
           />
-        </div>
-        <motion.div 
-          className="absolute top-3 left-3"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ 
-            delay: 0.2 + index * 0.1,
-            duration: 0.4, 
-            ease: "easeOut" 
-          }}
-        >
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/80 text-white backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80" />
+
+          <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider backdrop-blur-md">
             {post.category}
           </span>
-        </motion.div>
-      </div>
 
-      <div className="flex flex-col flex-grow p-5">
-        <motion.div 
-          className="flex items-center text-xs text-muted-foreground mb-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ 
-            delay: 0.3 + index * 0.1,
-            duration: 0.4 
-          }}
-        >
-          <span className="flex items-center">
-            <Calendar size={14} className="mr-1" /> {post.date}
+          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-background/60 opacity-0 backdrop-blur-md transition-all duration-slow ease-expo rotate-[-30deg] group-hover:rotate-0 group-hover:opacity-100">
+            <ArrowUpRight size={15} aria-hidden="true" />
           </span>
-          <span className="mx-2">•</span>
-          <span className="flex items-center">
-            <Clock size={14} className="mr-1" /> {post.readTime}
-          </span>
-        </motion.div>
+        </div>
 
-        <motion.h3 
-          variants={titleVariants}
-          className="text-xl font-semibold mb-3"
-        >
-          {post.title}
-        </motion.h3>
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <div className="mb-4 flex items-center gap-3 font-mono text-[11px] tracking-wide text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar size={12} aria-hidden="true" />
+              {post.date}
+            </span>
+            <span aria-hidden="true" className="text-white/20">
+              /
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Clock size={12} aria-hidden="true" />
+              {post.readTime}
+            </span>
+          </div>
 
-        <motion.p 
-          className="text-muted-foreground text-sm mb-4 flex-grow"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ 
-            delay: 0.4 + index * 0.1,
-            duration: 0.4 
-          }}
-        >
-          {post.excerpt}
-        </motion.p>
+          <h3 className="font-display text-lg font-semibold leading-snug tracking-tight transition-colors duration-base ease-smooth group-hover:text-primary">
+            {post.title}
+          </h3>
+          <p className="mt-2.5 flex-1 text-sm leading-relaxed text-muted-foreground">
+            {post.excerpt}
+          </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ 
-            delay: 0.5 + index * 0.1,
-            duration: 0.4 
-          }}
-        >
           <Link
             to={`/blog/${post.id}`}
-            className="inline-flex mt-auto items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors link-underline"
+            className="group/link mt-6 inline-flex w-fit items-center gap-1.5 border-t border-white/[0.07] pt-5 text-sm font-medium text-primary transition-colors duration-base ease-smooth hover:text-primary/80"
           >
-            Read More
+            Read article
+            <ArrowUpRight
+              size={15}
+              aria-hidden="true"
+              className="transition-transform duration-base ease-expo group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+            />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </motion.article>
   );
