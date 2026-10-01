@@ -1,9 +1,9 @@
 # Response headers for Netlify and Cloudflare Pages (both read this file).
 #
-# Deliberately no Content-Security-Policy: the site loads Google Fonts, inline
-# styles from framer-motion, an inline styled map <iframe>, and Lovable's
-# cdn.gpteng.co script. A CSP strict enough to be useful would need that list
-# audited first — add one once the placeholder content is replaced.
+# Deliberately no Content-Security-Policy: the site loads Google Fonts, emits
+# inline styles from framer-motion, and embeds a Google Maps <iframe> on the
+# contact page. A CSP strict enough to be useful would need that list audited
+# first — add one once the placeholder content is replaced.
 #
 # HSTS is intentionally omitted: on Netlify it must be set at the domain level,
 # not in _headers, and enabling it by mistake is hard to undo.

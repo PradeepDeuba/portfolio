@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import { componentTagger } from "lovable-tagger";
 
 /**
  * Emits dist/404.html as a copy of dist/index.html.
@@ -35,7 +34,7 @@ function spaFallback404() {
  */
 const base = process.env.VITE_BASE_PATH || "/";
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   base,
   server: {
     // Loopback only: the default "::" also exposed the dev server to the LAN.
@@ -46,9 +45,7 @@ export default defineConfig(({ mode }) => ({
     host: "localhost",
     port: 4173,
   },
-  plugins: [react(), mode === "development" && componentTagger(), spaFallback404()].filter(
-    Boolean
-  ),
+  plugins: [react(), spaFallback404()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

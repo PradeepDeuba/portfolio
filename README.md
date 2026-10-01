@@ -223,24 +223,6 @@ the SPA shell, so the app still boots and routes correctly). A host with
 `_redirects` returns 200 for the same URL — one reason the production deploy
 should not be GitHub Pages.
 
-## Lovable
-
-This repository is connected to a Lovable project:
-<https://lovable.dev/projects/79464821-ff6e-4b27-98ed-2a956fc49b19>
-
-Changes made via Lovable are committed to this repo automatically, and pushed
-changes are reflected back in Lovable. You can also edit files directly on
-GitHub or in a Codespace.
-
-To publish through Lovable, open the project and use **Share → Publish**. Lovable
-does not support custom domains; their docs recommend Netlify
-([Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)).
-
-Because of this connection, `index.html` still loads
-`https://cdn.gpteng.co/gptengineer.js` (Lovable's editor bridge) and carries a
-comment saying not to remove it. That script also ships in production builds —
-remove it once you stop editing through Lovable.
-
 ## Known issues
 
 - `tsconfig.app.json` sets `strict: false`, `noUnusedLocals: false` and
