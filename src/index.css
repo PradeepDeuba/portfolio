@@ -692,3 +692,39 @@
   font-size: 1.0625rem;
   line-height: 1.75;
 }
+
+/* ==========================================================================
+   MOMENTUM SCROLL (Lenis)
+   Only the rules this project needs, rather than importing lenis/dist/lenis.css:
+
+   - `scroll-behavior: auto !important` is required because html sets
+     `scroll-behavior: smooth` above, and the two would otherwise fight.
+   - The upstream stylesheet also sets `iframe { pointer-events: none }` while
+     scrolling is smooth. That is left out on purpose so the contact page's
+     Google Map stays interactive.
+   - Lenis is never instantiated under prefers-reduced-motion, so none of this
+     applies to those users.
+   ========================================================================== */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  /* Prevent the map from swallowing wheel events mid-scroll, but only while a
+     programmatic scroll is in flight. */
+  pointer-events: none;
+}

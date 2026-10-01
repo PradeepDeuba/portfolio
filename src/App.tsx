@@ -6,7 +6,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "./components/ThemeProvider";
 import ThemeSwitcher from "./components/ThemeSwitcher";
+import SmoothScroll from "./components/SmoothScroll";
+import IntroCurtain from "./components/IntroCurtain";
 import AmbientBackground from "./components/AmbientBackground";
+import { scrollToTop } from "./lib/smooth-scroll";
 import RouteShutter from "./components/RouteShutter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -24,18 +27,15 @@ import NotFound from "./pages/NotFound";
 /**
  * Reset scroll position on navigation, instantly.
  *
- * index.css sets `scroll-behavior: smooth` for anchor links, which would also
- * make this programmatic jump animate the whole page on every route change.
+ * Goes through Lenis when momentum scrolling is active — a bare window.scrollTo
+ * would be immediately overwritten by its interpolation. The helper falls back
+ * to the native call when Lenis is disabled (reduced motion).
  */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const root = document.documentElement;
-    const previous = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-    window.scrollTo(0, 0);
-    root.style.scrollBehavior = previous;
+    scrollToTop(true);
   }, [pathname]);
 
   return null;
@@ -54,7 +54,13 @@ const AppRoutes = () => {
   return (
     <>
       <ScrollToTop />
-      <AnimatePresence mode="wait" initial={false}>
+      {/*
+        No `initial={false}` here. AnimatePresence propagates `initial: false`
+        through the motion context, which suppresses the entrance animation of
+        every nested motion component — see the note in PageTransition.tsx.
+        Suppressing the first page fade is handled there instead.
+      */}
+      <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
@@ -85,6 +91,8 @@ const App = () => (
       <Toaster />
       <Sonner position="top-right" theme="dark" />
       <BrowserRouter basename={BASE_NAME}>
+        <SmoothScroll />
+        <IntroCurtain />
         <AmbientBackground />
         <CustomCursor />
 

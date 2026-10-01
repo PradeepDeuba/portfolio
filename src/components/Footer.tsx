@@ -33,6 +33,7 @@ const Footer = () => {
         <Marquee
           items={[site.name, site.tagline]}
           durationSec={60}
+          velocity
           itemClassName="text-3xl md:text-5xl text-muted-foreground/25"
           separator="/"
         />

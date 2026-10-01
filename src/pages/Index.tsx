@@ -27,7 +27,12 @@ const Index = () => (
       {/* Technologies actually used across the projects. Decorative repetition,
           so it is hidden from assistive tech. */}
       <div aria-hidden="true" className="border-y border-line py-7">
-        <Marquee items={allTags} durationSec={52} itemClassName="text-lg md:text-2xl text-muted-foreground/40" />
+        <Marquee
+          items={allTags}
+          durationSec={52}
+          velocity
+          itemClassName="text-lg md:text-2xl text-muted-foreground/40"
+        />
       </div>
 
       {/* Selected work */}

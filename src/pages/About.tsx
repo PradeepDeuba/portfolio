@@ -2,6 +2,7 @@ import { CircuitBoard, Cpu, GraduationCap, Layers, Radio, Wrench } from "lucide-
 import PageTransition from "../components/PageTransition";
 import PageHeader from "../components/PageHeader";
 import { Reveal } from "../components/Reveal";
+import { RevealImage } from "../components/RevealImage";
 import { SectionHeading } from "../components/SectionHeading";
 import { site } from "@/data/site";
 import { staggerDelay } from "@/lib/motion";
@@ -69,12 +70,10 @@ const About = () => (
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 sm:px-6 lg:grid-cols-12 lg:gap-16 lg:px-10">
           <Reveal className="lg:col-span-5">
             <div className="glow-card overflow-hidden rounded-2xl panel">
-              <img
+              <RevealImage
                 src={site.portrait}
                 alt={`${site.name}, ${site.title}`}
-                loading="lazy"
-                decoding="async"
-                className="aspect-[4/5] w-full object-cover"
+                className="aspect-[4/5] w-full"
               />
               <div className="border-t border-line px-5 py-4">
                 <p className="font-display text-lg font-semibold">{site.name}</p>

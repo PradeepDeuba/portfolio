@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import BlogPost from "../components/BlogPost";
 import { Reveal } from "../components/Reveal";
+import { RevealImage } from "../components/RevealImage";
 import { SectionHeading } from "../components/SectionHeading";
 import { Markdown } from "@/lib/markdown";
 import NotFound from "./NotFound";
@@ -97,11 +98,7 @@ const BlogDetail = () => {
 
           <Reveal className="mx-auto mt-14 max-w-4xl px-5 sm:px-6 lg:px-10">
             <div className="glow-card relative overflow-hidden rounded-2xl border border-line">
-              <img
-                src={post.cover}
-                alt=""
-                className="aspect-[16/9] w-full object-cover"
-              />
+              <RevealImage src={post.cover} alt="" priority className="aspect-[16/9] w-full" />
             </div>
           </Reveal>
 

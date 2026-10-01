@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import ProjectCard from "../components/ProjectCard";
 import { Reveal } from "../components/Reveal";
+import { RevealImage } from "../components/RevealImage";
 import { SectionHeading } from "../components/SectionHeading";
 import NotFound from "./NotFound";
 import { getProjectById, projects } from "@/data/projects";
@@ -82,10 +83,11 @@ const ProjectDetail = () => {
 
           <Reveal className="mx-auto mt-16 max-w-7xl px-5 sm:px-6 lg:px-10">
             <div className="glow-card relative overflow-hidden rounded-3xl border border-line">
-              <img
+              <RevealImage
                 src={project.image}
                 alt={project.title}
-                className="aspect-[16/9] w-full object-cover"
+                priority
+                className="aspect-[16/9] w-full"
               />
               <div
                 aria-hidden="true"
