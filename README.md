@@ -6,7 +6,7 @@ Kathmandu, Nepal. Built with Vite, React and Tailwind.
 All content is real: the bio, education, projects, repositories and the four
 blog posts come from the live site's Supabase tables. Nothing is placeholder.
 
-## Five design directions, one codebase
+## Six design directions, one codebase
 
 The site ships as **five switchable themes** so the direction can be chosen on
 the real content rather than from mockups. A floating switcher (bottom-right)
@@ -19,6 +19,28 @@ changes between them; the choice is remembered in `localStorage`.
 | **Editorial** | Print / Swiss — warm paper, serif throughout, ruled columns, no gradient or glow |
 | **Brutalist** | Anti-design — flat white, 3px black rules, hard offset shadows, system sans |
 | **Kinetic** | Type-led dark — glass panels, gradient accents, large kinetic headlines |
+| **Signal** | Near-black, one chartreuse accent, high-contrast serif display over a neutral sans, hairlines only |
+
+**Signal** is the default and was built after a quantitative study of
+`milancompain.com`'s own stylesheet. The reference's system, as measured:
+
+| | |
+|---|---|
+| Ground | `#0a0a0a`, with `#1f1f1f` hairlines as the only rule |
+| Type pairing | high-contrast **serif** display vs neutral **sans** body |
+| Scale | `.9 → 4.27rem` in exact **1.25×** steps, fluid via `clamp()` |
+| Labels | `.66–.72rem`, uppercase, **`.28–.32em`** tracking |
+| Weights | 400/500 dominant; 300 and 700/800 only at the extremes |
+| Accent | **one** high-chroma colour with an alpha ladder (`.08 → .5`) |
+| Easing | a **single** shared curve on every transition |
+| Decoration | none — no grid, no glow, no glass |
+| Layout | flex stacks, only two breakpoints (560/768), reduced-motion respected |
+
+The transferable *ideas* were adopted; the execution is original. The accent is
+chartreuse rather than their mint, the display face is Fraunces rather than
+theirs, the scale and easings are this project's own tokens, and no copy,
+imagery, layout or asset was reproduced. A build-time check confirms none of
+the reference's identifiers or colours appear in the shipped CSS or JS.
 
 How it works: every colour, font, radius and shadow is a CSS variable, and each
 theme re-declares that set under `[data-theme="…"]` in `src/index.css`.
