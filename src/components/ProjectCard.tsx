@@ -3,16 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
-
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  tags: string[];
-  demoUrl?: string;
-  githubUrl?: string;
-}
+import type { Project } from "@/data/projects";
 
 interface ProjectCardProps {
   project: Project;
@@ -37,6 +28,8 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
               imageLoaded ? "image-blur loaded" : "image-blur"
             }`}
+            loading="lazy"
+            decoding="async"
             onLoad={() => setImageLoaded(true)}
           />
         </div>

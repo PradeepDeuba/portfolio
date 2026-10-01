@@ -99,10 +99,17 @@
     background-color: #000000;
     color: #ffffff;
   }
-  
-  .smooth-scroll {
-    scroll-behavior: smooth;
-  }
+}
+
+/*
+ * Hides the native cursor only while CustomCursor is actually rendered.
+ * This used to be an unconditional `cursor-none` class in PageTransition,
+ * which left touch devices and reduced-motion users without any visible
+ * cursor once the custom one declined to render.
+ */
+.cursor-none-active,
+.cursor-none-active * {
+  cursor: none;
 }
 
 /* Glass morphism */

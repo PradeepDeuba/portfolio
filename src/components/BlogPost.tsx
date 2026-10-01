@@ -3,16 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Calendar, Clock } from "lucide-react";
-
-export interface Post {
-  id: string;
-  title: string;
-  excerpt: string;
-  image: string;
-  date: string;
-  readTime: string;
-  category: string;
-}
+import type { Post } from "@/data/posts";
 
 interface BlogPostProps {
   post: Post;
@@ -21,7 +12,6 @@ interface BlogPostProps {
 
 const BlogPost = ({ post, index }: BlogPostProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const cardVariants = {
     initial: { y: 50, opacity: 0 },
@@ -70,8 +60,6 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
       animate="animate"
       whileHover="hover"
       variants={cardVariants}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
       className="group bg-card border border-border rounded-xl overflow-hidden flex flex-col h-full shadow-sm"
     >
       <div className="relative overflow-hidden w-full pt-[56.25%]">
@@ -83,6 +71,8 @@ const BlogPost = ({ post, index }: BlogPostProps) => {
             className={`absolute inset-0 w-full h-full object-cover ${
               imageLoaded ? "image-blur loaded" : "image-blur"
             }`}
+            loading="lazy"
+            decoding="async"
             onLoad={() => setImageLoaded(true)}
           />
         </div>

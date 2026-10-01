@@ -1,5 +1,4 @@
-
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { motion } from "framer-motion";
 
 interface PageTransitionProps {
@@ -31,42 +30,36 @@ const pageTransition = {
   mass: 0.8,
 };
 
-const PageTransition = ({ children }: PageTransitionProps) => {
-  // Force dark mode
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-    
-    // Add a smooth scrolling class to the html element
-    document.documentElement.classList.add("smooth-scroll");
-    
-    // Set background to pure black
-    document.body.style.backgroundColor = "#000000";
-    document.body.style.color = "#ffffff";
-    
-    return () => {
-      // We're not allowing light mode, so we don't remove the dark class
-      document.documentElement.classList.remove("smooth-scroll");
-      document.body.style.backgroundColor = "";
-      document.body.style.color = "";
-    };
-  }, []);
-
-  return (
-    <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
-      className="min-h-screen w-full cursor-none overflow-x-hidden bg-black text-white"
-    >
-      {/* Gradient orbs for background effect */}
-      <div className="fixed -top-64 -right-64 w-[40rem] h-[40rem] bg-purple-500/5 rounded-full blur-3xl pointer-events-none z-0"></div>
-      <div className="fixed -bottom-64 -left-64 w-[40rem] h-[40rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
-      <div className="fixed top-1/3 left-1/4 w-[20rem] h-[20rem] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none z-0 animate-float"></div>
-      {children}
-    </motion.div>
-  );
-};
+/**
+ * Purely presentational. This component used to also mutate
+ * documentElement/body on mount and undo some of it on unmount, which fought
+ * with the equivalent effect in App.tsx. Theme and page classes now live in
+ * index.html, so there is nothing imperative left to do here.
+ */
+const PageTransition = ({ children }: PageTransitionProps) => (
+  <motion.div
+    initial="initial"
+    animate="in"
+    exit="out"
+    variants={pageVariants}
+    transition={pageTransition}
+    className="min-h-screen w-full overflow-x-hidden bg-black text-white"
+  >
+    {/* Gradient orbs for background effect */}
+    <div
+      aria-hidden="true"
+      className="fixed -top-64 -right-64 w-[40rem] h-[40rem] bg-purple-500/5 rounded-full blur-3xl pointer-events-none z-0"
+    />
+    <div
+      aria-hidden="true"
+      className="fixed -bottom-64 -left-64 w-[40rem] h-[40rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0"
+    />
+    <div
+      aria-hidden="true"
+      className="fixed top-1/3 left-1/4 w-[20rem] h-[20rem] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none z-0 animate-float"
+    />
+    {children}
+  </motion.div>
+);
 
 export default PageTransition;

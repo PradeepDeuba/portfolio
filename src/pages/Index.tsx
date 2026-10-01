@@ -6,37 +6,8 @@ import { ArrowRight, Code, Cpu, Globe, Lightbulb, Zap } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import ParticleBackground from "../components/ParticleBackground";
 import Hero from "../components/Hero";
-import ProjectCard, { Project } from "../components/ProjectCard";
-
-const featuredProjects: Project[] = [
-  {
-    id: "ai-platform",
-    title: "AI Research Platform",
-    description: "A collaborative platform for AI researchers to share models, datasets, and findings with an intuitive interface.",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
-    tags: ["React", "TensorFlow", "API"],
-    demoUrl: "/projects/ai-platform",
-    githubUrl: "https://github.com",
-  },
-  {
-    id: "fintech-dashboard",
-    title: "FinTech Analytics Dashboard",
-    description: "Real-time financial analytics dashboard with predictive modeling and customizable visualization tools.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-    tags: ["TypeScript", "D3.js", "Node.js"],
-    demoUrl: "/projects/fintech-dashboard",
-    githubUrl: "https://github.com",
-  },
-  {
-    id: "iot-platform",
-    title: "IoT Management Platform",
-    description: "Secure platform for managing IoT devices across industrial settings with real-time monitoring capabilities.",
-    image: "https://images.unsplash.com/photo-1563770660941-3bdc58a5a55c?auto=format&fit=crop&q=80&w=800",
-    tags: ["React", "MQTT", "GraphQL"],
-    demoUrl: "/projects/iot-platform",
-    githubUrl: "https://github.com",
-  },
-];
+import ProjectCard from "../components/ProjectCard";
+import { featuredProjects } from "@/data/projects";
 
 const services = [
   {

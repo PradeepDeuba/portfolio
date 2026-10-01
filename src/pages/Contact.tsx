@@ -3,25 +3,29 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import ContactForm from "../components/ContactForm";
+import { site } from "@/data/site";
 
 const contactInfo = [
   {
     icon: <Mail className="h-6 w-6" />,
     title: "Email",
-    details: "hello@innovo.com",
-    link: "mailto:hello@innovo.com"
+    details: site.contact.email,
+    link: `mailto:${site.contact.email}`,
+    external: false,
   },
   {
     icon: <Phone className="h-6 w-6" />,
     title: "Phone",
-    details: "+1 (555) 123-4567",
-    link: "tel:+15551234567"
+    details: site.contact.phone,
+    link: site.contact.phoneHref,
+    external: false,
   },
   {
     icon: <MapPin className="h-6 w-6" />,
     title: "Office",
-    details: "123 Innovation Drive, San Francisco, CA 94103",
-    link: "https://maps.google.com"
+    details: site.contact.address,
+    link: "https://maps.google.com",
+    external: true,
   }
 ];
 
@@ -62,8 +66,8 @@ const Contact = () => {
               <motion.a
                 key={index}
                 href={item.link}
-                target={item.title === "Office" ? "_blank" : undefined}
-                rel={item.title === "Office" ? "noopener noreferrer" : undefined}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}

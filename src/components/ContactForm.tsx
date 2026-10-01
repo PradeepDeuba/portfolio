@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -13,6 +13,18 @@ const ContactForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const resetTimeout = useRef<number | undefined>(undefined);
+  const isMounted = useRef(true);
+
+  // Neither timer used to be cleared, so the 3s reset could fire after the
+  // component had already unmounted.
+  useEffect(
+    () => () => {
+      isMounted.current = false;
+      window.clearTimeout(resetTimeout.current);
+    },
+    []
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,8 +40,10 @@ const ContactForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
+    // TODO: replace with a real submission endpoint. This only simulates a
+    // network round-trip and always reports success — no message is sent.
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (!isMounted.current) return;
 
     // Success
     setIsSubmitting(false);
@@ -37,7 +51,7 @@ const ContactForm = () => {
     toast.success("Message sent successfully! We'll get back to you soon.");
 
     // Reset form after delay
-    setTimeout(() => {
+    resetTimeout.current = window.setTimeout(() => {
       setFormData({
         name: "",
         email: "",
